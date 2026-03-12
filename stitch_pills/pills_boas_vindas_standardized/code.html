@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Pills - Bem-vindo</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#8b5cf6",
+                        "primary-light": "#ede9fe",
+                        "background-light": "#fbfaff",
+                        "background-dark": "#0f0d1a",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased">
+<div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+<div class="layout-container flex h-full grow flex-col">
+<!-- Top Navigation Bar -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-100 dark:border-slate-800 px-6 py-4 md:px-40 bg-background-light dark:bg-background-dark">
+<div class="flex items-center gap-3 text-primary">
+<div class="size-8">
+<svg fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M36.7273 44C33.9891 44 31.6043 39.8386 30.3636 33.69C29.123 39.8386 26.7382 44 24 44C21.2618 44 18.877 39.8386 17.6364 33.69C16.3957 39.8386 14.0109 44 11.2727 44C7.25611 44 4 35.0457 4 24C4 12.9543 7.25611 4 11.2727 4C14.0109 4 16.3957 8.16144 17.6364 14.31C18.877 8.16144 21.2618 4 24 4C26.7382 4 29.123 8.16144 30.3636 14.31C31.6043 8.16144 33.9891 4 36.7273 4C40.7439 4 44 12.9543 44 24C44 35.0457 40.7439 44 36.7273 44Z" fill="currentColor"></path>
+</svg>
+</div>
+<h2 class="text-xl font-bold leading-tight tracking-tight">Pills</h2>
+</div>
+<button class="flex items-center justify-center rounded-full p-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+</header>
+<main class="flex-1 flex flex-col items-center justify-center px-6 py-12 max-w-4xl mx-auto w-full">
+<!-- Hero Icon (Using 2D SVG Logo) -->
+<div class="w-full max-w-[480px] h-48 rounded-xl flex items-center justify-center relative overflow-hidden bg-white dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800 mb-12 shadow-sm">
+<div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent"></div>
+<div class="relative size-24 text-primary drop-shadow-xl">
+<svg fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M36.7273 44C33.9891 44 31.6043 39.8386 30.3636 33.69C29.123 39.8386 26.7382 44 24 44C21.2618 44 18.877 39.8386 17.6364 33.69C16.3957 39.8386 14.0109 44 11.2727 44C7.25611 44 4 35.0457 4 24C4 12.9543 7.25611 4 11.2727 4C14.0109 4 16.3957 8.16144 17.6364 14.31C18.877 8.16144 21.2618 4 24 4C26.7382 4 29.123 8.16144 30.3636 14.31C31.6043 8.16144 33.9891 4 36.7273 4C40.7439 4 44 12.9543 44 24C44 35.0457 40.7439 44 36.7273 44Z" fill="currentColor"></path>
+</svg>
+</div>
+</div>
+<!-- Content -->
+<div class="text-center space-y-4 mb-12">
+<h1 class="text-slate-900 dark:text-slate-50 text-4xl md:text-5xl font-black tracking-tight leading-tight px-4">
+                    Não esqueça seus medicamentos novamente
+                </h1>
+<p class="text-slate-500 dark:text-slate-400 text-lg md:text-xl font-normal max-w-xl mx-auto px-4 leading-normal">
+                    Gerencie suas receitas e horários de forma simples, inteligente e segura.
+                </p>
+</div>
+<!-- Action Buttons -->
+<div class="flex flex-col gap-4 w-full max-w-[480px]">
+<button class="w-full bg-primary text-white font-bold py-4 rounded-xl shadow-lg shadow-primary/30 hover:bg-primary/90 transition-all flex items-center justify-center gap-2">
+<span>Criar Conta</span>
+<span class="material-symbols-outlined">arrow_forward</span>
+</button>
+<button class="w-full bg-primary-light dark:bg-slate-800 text-primary dark:text-slate-300 font-bold py-4 rounded-xl hover:bg-[#ddd6fe] dark:hover:bg-slate-700 transition-all">
+<span>Entrar</span>
+</button>
+</div>
+</main>
+<!-- Footer Links -->
+<footer class="py-10 px-6 text-center flex flex-col items-center justify-center gap-4 text-slate-400 dark:text-slate-600">
+<div class="h-px w-24 bg-slate-100 dark:bg-slate-800"></div>
+<div class="flex flex-wrap justify-center gap-x-8 gap-y-3 text-sm font-medium">
+<a class="hover:text-primary transition-colors" href="#">Termos de Uso</a>
+<a class="hover:text-primary transition-colors" href="#">Política de Privacidade</a>
+<a class="hover:text-primary transition-colors" href="#">Suporte</a>
+</div>
+<p class="text-xs">
+                © 2026 Pills Inc.
+            </p>
+</footer>
+</div>
+</div>
+</body></html>

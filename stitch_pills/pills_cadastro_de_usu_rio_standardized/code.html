@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#8b5cf6",
+                        "primary-light": "#f3efff",
+                        "background-light": "#fbfaff",
+                        "background-dark": "#0f0d1a",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<title>Pills - Cadastro</title>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen">
+<div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+<div class="layout-container flex h-full grow flex-col">
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-100 dark:border-slate-800 px-6 py-4 md:px-40">
+<div class="flex items-center gap-2 text-primary">
+<span class="material-symbols-outlined !text-3xl">pill</span>
+<h2 class="text-xl font-black leading-tight tracking-tight">Pills</h2>
+</div>
+<button class="flex items-center justify-center rounded-full p-2 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+</header>
+<main class="flex flex-1 justify-center py-10 px-4 md:px-0">
+<div class="w-full max-w-[480px] flex flex-col gap-8 bg-white dark:bg-slate-900/50 p-8 rounded-xl shadow-sm border border-primary/10 h-fit">
+<div class="flex flex-col gap-2">
+<h1 class="text-3xl md:text-4xl font-black leading-tight tracking-[-0.033em] text-slate-900 dark:text-slate-50">Criar sua conta</h1>
+<p class="text-slate-500 dark:text-slate-400 text-base font-normal">Junte-se à nossa comunidade de bem-estar e controle sua rotina.</p>
+</div>
+<div class="w-full h-40 rounded-xl flex items-center justify-center relative overflow-hidden bg-primary/5 dark:bg-slate-800/50 border border-primary/10">
+<div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent"></div>
+<div class="relative text-primary flex items-center justify-center">
+<span class="material-symbols-outlined !text-7xl">pill</span>
+</div>
+</div>
+<form class="flex flex-col gap-5">
+<div class="flex flex-col gap-1.5">
+<label class="text-sm font-semibold text-slate-900 dark:text-slate-100 ml-0.5">Nome Completo</label>
+<input class="w-full px-4 h-14 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 focus:outline-0 focus:ring-2 focus:ring-primary/50 transition-all placeholder:text-slate-400 text-base" placeholder="Como podemos te chamar?" type="text"/>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="text-sm font-semibold text-slate-900 dark:text-slate-100 ml-0.5">E-mail</label>
+<input class="w-full px-4 h-14 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 focus:outline-0 focus:ring-2 focus:ring-primary/50 transition-all placeholder:text-slate-400 text-base" placeholder="exemplo@email.com" type="email"/>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="text-sm font-semibold text-slate-900 dark:text-slate-100 ml-0.5">Telefone</label>
+<input class="w-full px-4 h-14 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 focus:outline-0 focus:ring-2 focus:ring-primary/50 transition-all placeholder:text-slate-400 text-base" placeholder="(00) 00000-0000" type="tel"/>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="flex flex-col gap-1.5">
+<label class="text-sm font-semibold text-slate-900 dark:text-slate-100 ml-0.5">Senha</label>
+<input class="w-full px-4 h-14 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 focus:outline-0 focus:ring-2 focus:ring-primary/50 transition-all placeholder:text-slate-400 text-base" placeholder="••••••••" type="password"/>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="text-sm font-semibold text-slate-900 dark:text-slate-100 ml-0.5">Confirmar Senha</label>
+<input class="w-full px-4 h-14 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 focus:outline-0 focus:ring-2 focus:ring-primary/50 transition-all placeholder:text-slate-400 text-base" placeholder="••••••••" type="password"/>
+</div>
+</div>
+<div class="mt-4 flex flex-col gap-3">
+<button class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 shadow-sm shadow-primary/20" type="submit">
+<span>Criar Conta</span>
+<span class="material-symbols-outlined !text-lg">arrow_forward</span>
+</button>
+<button class="w-full bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold py-4 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-all" type="button">
+                                Voltar
+                            </button>
+</div>
+<p class="text-center text-xs md:text-sm text-slate-500 dark:text-slate-400 mt-4 px-4 leading-relaxed">
+                            Ao se cadastrar, você concorda com nossos <a class="text-primary font-semibold hover:underline" href="#">Termos de Uso</a> e <a class="text-primary font-semibold hover:underline" href="#">Política de Privacidade</a>.
+                        </p>
+</form>
+</div>
+</main>
+<footer class="py-10 flex flex-col items-center justify-center gap-4 text-slate-400 dark:text-slate-600">
+<div class="h-px w-24 bg-slate-200 dark:bg-slate-800"></div>
+<p class="text-sm font-medium">© 2026 Pills Inc.</p>
+</footer>
+</div>
+</div>
+</body></html>

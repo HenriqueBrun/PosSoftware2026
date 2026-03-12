@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "primary": "#A78BFA",
+                "primary-dark": "#9061F9",
+                "background-light": "#fbfaff",
+                "background-dark": "#0f0d1a",
+              },
+              fontFamily: {
+                "display": ["Inter"]
+              },
+              borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+            },
+          },
+        }
+    </script>
+<title>Pills - Login</title>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+<div class="relative flex h-full min-h-screen w-full flex-col bg-background-light dark:bg-background-dark group/design-root overflow-x-hidden">
+<div class="layout-container flex h-full grow flex-col">
+<div class="px-4 md:px-40 flex flex-1 justify-center items-center py-10">
+<div class="layout-content-container flex flex-col max-w-[480px] w-full flex-1 bg-white dark:bg-slate-900/50 p-8 rounded-xl shadow-sm border border-slate-100 dark:border-slate-800">
+<div class="flex flex-col items-center justify-center mb-10 gap-4">
+<div class="w-20 h-20 text-primary flex items-center justify-center">
+<svg fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M36.7273 44C33.9891 44 31.6043 39.8386 30.3636 33.69C29.123 39.8386 26.7382 44 24 44C21.2618 44 18.877 39.8386 17.6364 33.69C16.3957 39.8386 14.0109 44 11.2727 44C7.25611 44 4 35.0457 4 24C4 12.9543 7.25611 4 11.2727 4C14.0109 4 16.3957 8.16144 17.6364 14.31C18.877 8.16144 21.2618 4 24 4C26.7382 4 29.123 8.16144 30.3636 14.31C31.6043 8.16144 33.9891 4 36.7273 4C40.7439 4 44 12.9543 44 24C44 35.0457 40.7439 44 36.7273 44Z" fill="currentColor"></path>
+</svg>
+</div>
+<div class="text-center">
+<h1 class="text-primary text-4xl font-black leading-tight tracking-tight">Pills</h1>
+<p class="text-slate-500 dark:text-slate-400 text-lg mt-1">Sua rotina de bem-estar começa aqui.</p>
+</div>
+</div>
+<div class="flex flex-col gap-5">
+<div class="flex flex-col gap-1.5">
+<label class="flex flex-col w-full">
+<p class="text-slate-700 dark:text-slate-300 text-sm font-semibold leading-normal pb-1 ml-1">E-mail</p>
+<input class="form-input flex w-full min-w-0 flex-1 rounded-xl text-slate-900 dark:text-slate-100 focus:outline-0 focus:ring-4 focus:ring-primary/10 focus:border-primary border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 h-14 placeholder:text-slate-400 p-[15px] text-base font-normal leading-normal transition-all" placeholder="exemplo@email.com" type="email"/>
+</label>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="flex flex-col w-full">
+<p class="text-slate-700 dark:text-slate-300 text-sm font-semibold leading-normal pb-1 ml-1">Senha</p>
+<div class="relative flex w-full flex-1 items-stretch">
+<input class="form-input flex w-full min-w-0 flex-1 rounded-xl text-slate-900 dark:text-slate-100 focus:outline-0 focus:ring-4 focus:ring-primary/10 focus:border-primary border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 h-14 placeholder:text-slate-400 pl-[15px] pr-[45px] text-base font-normal leading-normal transition-all" placeholder="Sua senha segura" type="password"/>
+<div class="absolute right-[15px] top-1/2 -translate-y-1/2 text-slate-400 cursor-pointer hover:text-slate-600 transition-colors">
+<span class="material-symbols-outlined">visibility</span>
+</div>
+</div>
+</label>
+</div>
+<div class="flex justify-end">
+<a class="text-primary text-sm font-semibold leading-normal hover:underline" href="#">Esqueci minha senha</a>
+</div>
+<button class="w-full bg-primary hover:bg-primary-dark text-white font-bold py-4 px-6 rounded-xl transition-all duration-200 mt-4 flex items-center justify-center gap-2 shadow-lg shadow-primary/30">
+<span>Entrar</span>
+<span class="material-symbols-outlined !text-lg">login</span>
+</button>
+<div class="relative my-6">
+<div class="absolute inset-0 flex items-center">
+<div class="w-full border-t border-slate-200 dark:border-slate-800"></div>
+</div>
+<div class="relative flex justify-center text-sm">
+<span class="bg-white dark:bg-slate-900 px-3 text-slate-500 font-medium">ou continue com</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<button class="flex items-center justify-center gap-2 border border-slate-200 dark:border-slate-800 rounded-xl py-3.5 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+<img alt="Google" class="w-5 h-5" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXKSRjd7GLVlLiVgz1HYnaVi_rD36GSLi82-iSN5TIDnutvh69m0mNlpJrklsLTB6igEJNGB28CqbxitxbEbx3XF_yF5TagBKGUEv1S8qqfzC3eiRDI6kXjvy6Z6HMHBy9NbAP58APdSU6Nac_O48dOSzYGX2VfORbjs88BnAXWDzkopRkLjiEAhEsIqz-T0EUavLrjFnq-3lnvKrWhIOoCcVpDcOf00b-4FErbeZ5hke1S428zAl11UshXSrRUk76xP5039qHrZIu"/>
+<span class="text-sm font-semibold">Google</span>
+</button>
+<button class="flex items-center justify-center gap-2 border border-slate-200 dark:border-slate-800 rounded-xl py-3.5 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+<img alt="Apple" class="w-5 h-5" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDmF6MGeeRI9nNDjh5XbWrPGJfCVwtzu3nuqkFtWfUP5eFoRmGQAoSa37rAS0aCazyZXsqOY7874ThIbAG2ldmMbiPAYP4vFmkk9miaRpRiIAjXJfzpcFqQH6RaW4es--d-q02Ju2NTy8FlwlgcxPOKE1IqS0lzK-MkobRlNCVD7r5famP-ssnxHMjzMx79-JNzptHuoD21WvysJWMUm9y0u1Vm_Y3QwsxnnXUuaTzR1h8BAK5TM80iLi2i25xzKbIar3jUg-tZJcaP"/>
+<span class="text-sm font-semibold">Apple</span>
+</button>
+</div>
+<div class="mt-8 text-center">
+<p class="text-slate-600 dark:text-slate-400 text-sm">
+                            Não tem uma conta? 
+                            <a class="text-primary font-bold hover:underline" href="#">Criar Conta</a>
+</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</body></html>
