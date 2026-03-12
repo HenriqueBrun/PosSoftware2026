@@ -156,7 +156,6 @@
   * Email
   * Telefone
   * Senha (com opção de alterar)
-  * Preferências de Notificação (canais habilitados/desabilitados)
 * **Botões:** Salvar Alterações, Cancelar, Logout, Deletar Conta (com confirmação)
 * **Links:** Voltar para Dashboard
 * **Considerações:**
