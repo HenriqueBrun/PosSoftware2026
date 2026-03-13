@@ -1,0 +1,26 @@
+// Prisma Schema — Pills
+// ORM: Prisma 6 | Provider: PostgreSQL (Supabase)
+// spec_tech.md: Prisma Migrations, UUID primary keys, user_id isolation
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Placeholder Model ────────────────────────────────────────────────────────
+// Modelo mínimo para validar a conexão com o banco.
+// Será expandido conforme os módulos de feature forem desenvolvidos.
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("users")
+}
