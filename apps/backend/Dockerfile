@@ -9,12 +9,13 @@ WORKDIR /app
 
 # Copy root workspace manifests
 COPY package.json ./
+COPY package-lock.json ./
 
 # Copy backend package manifests
 COPY apps/backend/package.json ./apps/backend/
 
 # Install workspace dependencies
-RUN npm ci --workspace=apps/backend --include-workspace-root
+RUN npm install --workspace=apps/backend --include-workspace-root
 
 # ─────────────────────────────────────────────
 # Stage 2: Build the NestJS app
@@ -25,7 +26,6 @@ WORKDIR /app
 
 # Copy node_modules from deps
 COPY --from=deps /app/node_modules ./node_modules
-COPY --from=deps /app/apps/backend/node_modules ./apps/backend/node_modules
 
 # Copy source
 COPY apps/backend ./apps/backend
@@ -52,7 +52,7 @@ ENV NODE_ENV=production
 
 # Copy build output and runtime node_modules
 COPY --from=builder --chown=nestjs:nodejs /app/apps/backend/dist ./dist
-COPY --from=builder --chown=nestjs:nodejs /app/apps/backend/node_modules ./node_modules
+COPY --from=builder --chown=nestjs:nodejs /app/node_modules ./node_modules
 COPY --from=builder --chown=nestjs:nodejs /app/apps/backend/prisma ./prisma
 COPY --from=builder --chown=nestjs:nodejs /app/apps/backend/package.json ./
 

@@ -19,8 +19,34 @@ model User {
   id        String   @id @default(uuid())
   email     String   @unique
   name      String
+  password  String
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
+  
+  medications Medication[] // Relation to Medication
 
   @@map("users")
+}
+
+model Medication {
+  id           String      @id @default(uuid())
+  name         String
+  dosage       String
+  frequency    String
+  startDate    DateTime    @map("start_date")
+  endDate      DateTime?   @map("end_date")
+  criticality  String      // "low", "medium", "high"
+  
+  notifyApp    Boolean     @default(false) @map("notify_app")
+  notifySms    Boolean     @default(false) @map("notify_sms")
+  notifyWa     Boolean     @default(false) @map("notify_wa")
+  notifyEmail  Boolean     @default(false) @map("notify_email")
+
+  userId       String      @map("user_id")
+  user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt    DateTime    @default(now()) @map("created_at")
+  updatedAt    DateTime    @updatedAt @map("updated_at")
+
+  @@map("medications")
 }

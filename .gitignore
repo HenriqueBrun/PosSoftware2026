@@ -8,10 +8,10 @@ dist/
 build/
 .next/
 out/
+package-lock.json
 
 # Environment files
-.env*.local
-.env.production
+.env*
 
 # Logs
 *.log
@@ -26,8 +26,10 @@ Thumbs.db
 # Editor
 .vscode/
 .idea/
+.agent/
 *.swp
 *.swo
+PosSoftware2026.code-workspace
 
 # Docker
 .dockerignore

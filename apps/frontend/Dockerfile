@@ -9,12 +9,13 @@ WORKDIR /app
 
 # Copy root workspace manifests
 COPY package.json ./
+COPY package-lock.json ./
 
 # Copy only the frontend package manifests
 COPY apps/frontend/package.json ./apps/frontend/
 
 # Install all workspace dependencies
-RUN npm ci --workspace=apps/frontend --include-workspace-root
+RUN npm install --workspace=apps/frontend --include-workspace-root
 
 # ─────────────────────────────────────────────
 # Stage 2: Build the Next.js app
@@ -25,7 +26,9 @@ WORKDIR /app
 
 # Copy installed node_modules from deps stage
 COPY --from=deps /app/node_modules ./node_modules
-COPY --from=deps /app/apps/frontend/node_modules ./apps/frontend/node_modules
+
+# Copy root workspace manifest for Next.js standalone tracing
+COPY package.json ./
 
 # Copy source files
 COPY apps/frontend ./apps/frontend
@@ -54,7 +57,6 @@ ENV NEXT_TELEMETRY_DISABLED=1
 # Copy only standalone output (already includes server.js + node_modules subset)
 COPY --from=builder --chown=nextjs:nodejs /app/apps/frontend/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/apps/frontend/.next/static ./apps/frontend/.next/static
-COPY --from=builder --chown=nextjs:nodejs /app/apps/frontend/public ./apps/frontend/public
 
 USER nextjs
 
