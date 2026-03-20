@@ -1,40 +1,134 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { apiFetch } from '@/lib/api'
 
 export default function DashboardPage() {
   const router = useRouter()
   const [userName, setUserName] = useState('Usuário')
+  const [upcomingEvents, setUpcomingEvents] = useState<any[]>([])
+  const [todayDosesCount, setTodayDosesCount] = useState<number>(0)
+  const [totalTakenCount, setTotalTakenCount] = useState<number>(0)
+  const [totalSkippedCount, setTotalSkippedCount] = useState<number>(0)
+
+  const getToken = useCallback(() => {
+    return localStorage.getItem('pills_token')
+  }, [])
+
+  const fetchTodayCounts = useCallback(async (token: string) => {
+    try {
+      const startOfDay = new Date();
+      startOfDay.setHours(0, 0, 0, 0);
+      const endOfDay = new Date();
+      endOfDay.setHours(23, 59, 59, 999);
+      const todayRes = await apiFetch<any[]>(`/api/v1/medications/events?startDate=${startOfDay.toISOString()}&endDate=${endOfDay.toISOString()}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (!todayRes.error && todayRes.data) {
+        setTodayDosesCount(todayRes.data.length);
+      }
+    } catch (e) {
+      console.error('Error fetching today counts:', e);
+    }
+  }, [])
+
+  const fetchAllTimeCounts = useCallback(async (token: string) => {
+    try {
+      const allRes = await apiFetch<any[]>('/api/v1/medications/events', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (!allRes.error && allRes.data) {
+        setTotalTakenCount(allRes.data.filter(e => e.status === 'TAKEN').length);
+        setTotalSkippedCount(allRes.data.filter(e => e.status === 'SKIPPED').length);
+      }
+    } catch (e) {
+      console.error('Error fetching all-time counts:', e);
+    }
+  }, [])
+
+  const fetchUpcomingEvents = useCallback(async (token: string) => {
+    try {
+      const evtsRes = await apiFetch<any[]>('/api/v1/medications/events/upcoming', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (!evtsRes.error && evtsRes.data) {
+        setUpcomingEvents(evtsRes.data);
+      }
+    } catch (e) {
+      console.error('Error fetching upcoming events:', e);
+    }
+  }, [])
 
   useEffect(() => {
-    // Basic auth check
-    const token = localStorage.getItem('pills_token')
+    const token = getToken()
     if (!token) {
       router.push('/login')
       return
     }
-    const fetchUser = async () => {
-      if (!token) return
+
+    const fetchData = async () => {
+      // Buscar dados do usuário
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api/v1'}/users/me`, {
+        const userRes = await apiFetch<any>('/api/v1/users/me', {
           headers: { Authorization: `Bearer ${token}` }
-        })
-        if (res.ok) {
-          const data = await res.json()
-          setUserName(data.name || data.email.split('@')[0])
+        });
+        if (!userRes.error && userRes.data) {
+          setUserName(userRes.data.name || userRes.data.email.split('@')[0]);
         } else {
+          // Fallback: decode JWT
           try {
             const payload = JSON.parse(atob(token.split('.')[1]))
             if (payload.email) setUserName(payload.email.split('@')[0])
           } catch (e) { }
         }
       } catch (e) { }
+
+      // Buscar próximas doses e contagens em paralelo
+      await Promise.all([
+        fetchUpcomingEvents(token),
+        fetchTodayCounts(token),
+        fetchAllTimeCounts(token),
+      ]);
     }
 
-    fetchUser()
-  }, [router])
+    fetchData()
+  }, [router, getToken, fetchUpcomingEvents, fetchTodayCounts, fetchAllTimeCounts])
+
+  const handleUpdateStatus = async (eventId: string, newStatus: string) => {
+    try {
+      const token = getToken();
+      if (!token) return;
+
+      const res = await apiFetch(`/api/v1/medications/events/${eventId}/status`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ status: newStatus })
+      });
+
+      if (!res.error) {
+        // Optimistically remove from upcoming list
+        setUpcomingEvents(prev => prev.filter(e => e.id !== eventId));
+
+        // Optimistically update count cards
+        if (newStatus === 'TAKEN') setTotalTakenCount(prev => prev + 1);
+        if (newStatus === 'SKIPPED') setTotalSkippedCount(prev => prev + 1);
+
+        // Re-fetch from server for accuracy
+        await Promise.all([
+          fetchUpcomingEvents(token),
+          fetchTodayCounts(token),
+          fetchAllTimeCounts(token),
+        ]);
+      }
+    } catch (e) {
+      console.error('Error updating event status:', e);
+    }
+  };
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--color-background)', display: 'flex' }}>
@@ -197,9 +291,9 @@ export default function DashboardPage() {
         {/* Informational Cards */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px', marginBottom: '48px' }}>
           {[
-            { title: 'Doses Hoje', value: '0', color: 'var(--color-primary)', icon: '☀️' },
-            { title: 'Atrasados', value: '0', color: 'var(--color-success)', icon: '✅' },
-            { title: 'Estoque Baixo', value: '0', color: 'var(--color-danger)', icon: '⚠️' }
+            { title: 'Doses Hoje', value: todayDosesCount.toString(), color: 'var(--color-primary)', icon: '☀️' },
+            { title: 'Em Dia', value: totalTakenCount.toString(), color: 'var(--color-success)', icon: '✅' },
+            { title: 'Atrasados / Pulados', value: totalSkippedCount.toString(), color: 'var(--color-danger)', icon: '❌' }
           ].map((card, idx) => (
             <div
               key={idx}
@@ -246,18 +340,68 @@ export default function DashboardPage() {
             Próximas Doses
           </h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            {/* Lista vazia de medicamentos */}
-            <div
-              style={{
-                textAlign: 'center',
-                padding: '40px',
-                border: '1px dashed var(--color-border)',
-                borderRadius: '12px',
-                color: 'var(--color-text-secondary)'
-              }}
-            >
-              Nenhuma dose programada para hoje.
-            </div>
+            {upcomingEvents.length === 0 ? (
+              <div
+                style={{
+                  textAlign: 'center',
+                  padding: '40px',
+                  border: '1px dashed var(--color-border)',
+                  borderRadius: '12px',
+                  color: 'var(--color-text-secondary)'
+                }}
+              >
+                Nenhuma dose programada.
+              </div>
+            ) : (
+              upcomingEvents.map((event, idx) => (
+                <div key={idx} style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '16px 24px',
+                  background: 'var(--color-surface)',
+                  border: '1px solid var(--color-border)',
+                  borderRadius: '12px',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.02)'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                    <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'rgba(139, 92, 246, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>
+                      💊
+                    </div>
+                    <div>
+                      <h4 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: 'var(--color-text-primary)' }}>
+                        {event.medication?.name || 'Medicamento'}
+                      </h4>
+                      <p style={{ margin: 0, fontSize: '14px', color: 'var(--color-text-secondary)' }}>
+                        {event.medication?.dosage || ''}
+                      </p>
+                    </div>
+                  </div>
+                  <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '8px' }}>
+                    <div>
+                      <p style={{ margin: 0, fontSize: '16px', fontWeight: 700, color: 'var(--color-primary)' }}>
+                        {new Date(event.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </p>
+                      <p style={{ margin: 0, fontSize: '12px', color: 'var(--color-text-secondary)' }}>
+                        {new Date(event.time).toLocaleDateString()}
+                      </p>
+                    </div>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <button 
+                        onClick={() => handleUpdateStatus(event.id, 'SKIPPED')}
+                        style={{ background: 'transparent', border: '1px solid var(--color-danger)', color: 'var(--color-danger)', padding: '4px 12px', borderRadius: '6px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer' }}>
+                        Pular
+                      </button>
+                      <button 
+                        onClick={() => handleUpdateStatus(event.id, 'TAKEN')}
+                        style={{ background: 'var(--color-success)', border: 'none', color: '#fff', padding: '4px 12px', borderRadius: '6px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer' }}>
+                        Tomar
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </main>

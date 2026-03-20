@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseGuards, Request, Get, Put, Param, Delete } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Request, Get, Put, Patch, Param, Delete, Query } from '@nestjs/common';
 import { MedicationsService } from './medications.service';
 import { CreateMedicationDto } from './dto/create-medication.dto';
 import { UpdateMedicationDto } from './dto/update-medication.dto';
@@ -17,6 +17,23 @@ export class MedicationsController {
   @Get()
   findAll(@Request() req: any) {
     return this.medicationsService.findAllByUser(req.user.userId);
+  }
+
+  @Get('events/upcoming')
+  findUpcomingEvents(@Request() req: any) {
+    return this.medicationsService.findUpcomingEventsByUser(req.user.userId, 5);
+  }
+
+  @Get('events')
+  findEvents(@Request() req: any, @Query('startDate') startDate?: string, @Query('endDate') endDate?: string) {
+    const sDate = startDate ? new Date(startDate) : undefined;
+    const eDate = endDate ? new Date(endDate) : undefined;
+    return this.medicationsService.findEventsByUser(req.user.userId, sDate, eDate);
+  }
+
+  @Patch('events/:id/status')
+  updateEventStatus(@Param('id') id: string, @Request() req: any, @Body('status') status: string) {
+    return this.medicationsService.updateEventStatus(id, req.user.userId, status);
   }
 
   @Get(':id')

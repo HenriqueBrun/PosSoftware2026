@@ -15,6 +15,7 @@ export default function NovoMedicamentoPage() {
     dosage: '',
     frequency: '',
     startDate: '',
+    startTime: '08:00',
     endDate: '',
     criticality: 'low',
     notifyApp: true,
@@ -99,33 +100,33 @@ export default function NovoMedicamentoPage() {
                         style={{ height: '48px', padding: '0 16px', borderRadius: '8px', border: '1px solid var(--color-border)', outline: 'none', background: 'var(--color-background)', color: 'var(--color-text-primary)' }}
                         placeholder="Ex: Paracetamol 500mg" type="text" />
                     </label>
-                    
+
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
-                        <label style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                      <label style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                         <span style={{ fontSize: '14px', fontWeight: 600, color: 'var(--color-text-primary)' }}>Dosagem</span>
                         <input
-                            required
-                            value={formData.dosage}
-                            onChange={e => setFormData({ ...formData, dosage: e.target.value })}
-                            style={{ height: '48px', padding: '0 16px', borderRadius: '8px', border: '1px solid var(--color-border)', outline: 'none', background: 'var(--color-background)', color: 'var(--color-text-primary)' }}
-                            placeholder="Ex: 1 comprimido" type="text" />
-                        </label>
-                        <label style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                          required
+                          value={formData.dosage}
+                          onChange={e => setFormData({ ...formData, dosage: e.target.value })}
+                          style={{ height: '48px', padding: '0 16px', borderRadius: '8px', border: '1px solid var(--color-border)', outline: 'none', background: 'var(--color-background)', color: 'var(--color-text-primary)' }}
+                          placeholder="Ex: 1 comprimido" type="text" />
+                      </label>
+                      <label style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                         <span style={{ fontSize: '14px', fontWeight: 600, color: 'var(--color-text-primary)' }}>Frequência</span>
                         <select
-                            required
-                            value={formData.frequency}
-                            onChange={e => setFormData({ ...formData, frequency: e.target.value })}
-                            style={{ height: '48px', padding: '0 16px', borderRadius: '8px', border: '1px solid var(--color-border)', outline: 'none', background: 'var(--color-background)', color: 'var(--color-text-primary)' }}>
-                            <option value="">Selecione...</option>
-                            <option value="4h">A cada 4 horas</option>
-                            <option value="6h">A cada 6 horas</option>
-                            <option value="8h">A cada 8 horas</option>
-                            <option value="12h">A cada 12 horas</option>
-                            <option value="daily">Uma vez ao dia</option>
-                            <option value="custom">Personalizado</option>
+                          required
+                          value={formData.frequency}
+                          onChange={e => setFormData({ ...formData, frequency: e.target.value })}
+                          style={{ height: '48px', padding: '0 16px', borderRadius: '8px', border: '1px solid var(--color-border)', outline: 'none', background: 'var(--color-background)', color: 'var(--color-text-primary)' }}>
+                          <option value="">Selecione...</option>
+                          <option value="4h">A cada 4 horas</option>
+                          <option value="6h">A cada 6 horas</option>
+                          <option value="8h">A cada 8 horas</option>
+                          <option value="12h">A cada 12 horas</option>
+                          <option value="daily">Uma vez ao dia</option>
+                          <option value="custom">Personalizado</option>
                         </select>
-                        </label>
+                      </label>
                     </div>
                   </div>
                 </div>
@@ -133,7 +134,7 @@ export default function NovoMedicamentoPage() {
                 {/* Schedule Section */}
                 <div style={{ padding: '32px', borderBottom: '1px solid var(--color-border)', background: 'rgba(139, 92, 246, 0.03)' }}>
                   <h3 style={{ fontSize: '11px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--color-primary)', marginBottom: '24px' }}>Período do Tratamento</h3>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '24px' }}>
                     <label style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                       <span style={{ fontSize: '14px', fontWeight: 600, color: 'var(--color-text-primary)' }}>Data de Início</span>
                       <input
@@ -142,6 +143,15 @@ export default function NovoMedicamentoPage() {
                         onChange={e => setFormData({ ...formData, startDate: e.target.value })}
                         style={{ height: '48px', padding: '0 16px', borderRadius: '8px', border: '1px solid var(--color-border)', outline: 'none', background: 'var(--color-background)', color: 'var(--color-text-primary)' }}
                         type="date" />
+                    </label>
+                    <label style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                      <span style={{ fontSize: '14px', fontWeight: 600, color: 'var(--color-text-primary)' }}>Hora da Primeira Dose</span>
+                      <input
+                        required
+                        value={formData.startTime}
+                        onChange={e => setFormData({ ...formData, startTime: e.target.value })}
+                        style={{ height: '48px', padding: '0 16px', borderRadius: '8px', border: '1px solid var(--color-border)', outline: 'none', background: 'var(--color-background)', color: 'var(--color-text-primary)' }}
+                        type="time" />
                     </label>
                     <label style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                       <span style={{ fontSize: '14px', fontWeight: 600, color: 'var(--color-text-primary)' }}>Data de Término (Opcional)</span>
@@ -158,40 +168,40 @@ export default function NovoMedicamentoPage() {
                 <div style={{ padding: '32px', borderBottom: '1px solid var(--color-border)' }}>
                   <h3 style={{ fontSize: '11px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--color-primary)', marginBottom: '24px' }}>Criticidade</h3>
                   <div style={{ display: 'flex', gap: '16px' }}>
-                    
+
                     {['low', 'medium', 'high'].map(crit => (
-                        <div key={crit} style={{ flex: 1 }}>
-                            <input 
-                                type="radio" 
-                                id={`crit-${crit}`} 
-                                name="criticality" 
-                                value={crit}
-                                checked={formData.criticality === crit}
-                                onChange={e => setFormData({...formData, criticality: e.target.value})}
-                                style={{ display: 'none' }} 
-                            />
-                            <label
-                                htmlFor={`crit-${crit}`}
-                                style={{
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    padding: '20px',
-                                    borderRadius: '16px',
-                                    border: `1px solid ${formData.criticality === crit ? 'var(--color-primary)' : 'var(--color-border)'}`,
-                                    background: formData.criticality === crit ? 'var(--color-primary)' : 'transparent',
-                                    color: formData.criticality === crit ? '#fff' : 'var(--color-text-secondary)',
-                                    cursor: 'pointer',
-                                    transition: 'all 0.2s'
-                                }}
-                            >
-                                <span style={{ fontSize: '24px', marginBottom: '8px' }}>💊</span>
-                                <span style={{ fontSize: '10px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-                                    {crit === 'low' ? 'Baixa' : crit === 'medium' ? 'Média' : 'Alta'}
-                                </span>
-                            </label>
-                        </div>
+                      <div key={crit} style={{ flex: 1 }}>
+                        <input
+                          type="radio"
+                          id={`crit-${crit}`}
+                          name="criticality"
+                          value={crit}
+                          checked={formData.criticality === crit}
+                          onChange={e => setFormData({ ...formData, criticality: e.target.value })}
+                          style={{ display: 'none' }}
+                        />
+                        <label
+                          htmlFor={`crit-${crit}`}
+                          style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            padding: '20px',
+                            borderRadius: '16px',
+                            border: `1px solid ${formData.criticality === crit ? 'var(--color-primary)' : 'var(--color-border)'}`,
+                            background: formData.criticality === crit ? 'var(--color-primary)' : 'transparent',
+                            color: formData.criticality === crit ? '#fff' : 'var(--color-text-secondary)',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s'
+                          }}
+                        >
+                          <span style={{ fontSize: '24px', marginBottom: '8px' }}>💊</span>
+                          <span style={{ fontSize: '10px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                            {crit === 'low' ? 'Baixa' : crit === 'medium' ? 'Média' : 'Alta'}
+                          </span>
+                        </label>
+                      </div>
                     ))}
                   </div>
                 </div>

@@ -11,9 +11,13 @@ export async function apiFetch<T>(
 ): Promise<ApiResponse<T>> {
   try {
     const url = `${API_BASE_URL}${path}`
+    const { headers: optionHeaders, ...restOptions } = options || {}
     const res = await fetch(url, {
-      headers: { 'Content-Type': 'application/json' },
-      ...options,
+      ...restOptions,
+      headers: {
+        'Content-Type': 'application/json',
+        ...(optionHeaders as Record<string, string>),
+      },
     })
 
     if (!res.ok) {

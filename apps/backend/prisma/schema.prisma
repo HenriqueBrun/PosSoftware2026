@@ -47,6 +47,27 @@ model Medication {
 
   createdAt    DateTime    @default(now()) @map("created_at")
   updatedAt    DateTime    @updatedAt @map("updated_at")
+  
+  events       MedicationEvent[]
 
   @@map("medications")
+}
+
+model MedicationEvent {
+  id           String      @id @default(uuid())
+  medicationId String      @map("medication_id")
+  time         DateTime
+  status       String      @default("PENDING") // PENDING, TAKEN, SKIPPED
+  
+  notifiedApp  Boolean     @default(false) @map("notified_app")
+  notifiedSms  Boolean     @default(false) @map("notified_sms")
+  notifiedWa   Boolean     @default(false) @map("notified_wa")
+  notifiedEmail Boolean    @default(false) @map("notified_email")
+
+  createdAt    DateTime    @default(now()) @map("created_at")
+  updatedAt    DateTime    @updatedAt @map("updated_at")
+
+  medication   Medication  @relation(fields: [medicationId], references: [id], onDelete: Cascade)
+
+  @@map("medication_events")
 }
