@@ -8,7 +8,7 @@ dist/
 build/
 .next/
 out/
-package-lock.json
+# package-lock.json  # REMOVED from ignore to support CI/CD
 
 # Environment files
 .env*
