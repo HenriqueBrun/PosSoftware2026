@@ -11,7 +11,7 @@ export class UsersController {
   async getProfile(@Request() req: any) {
     const user = await this.usersService.findById(req.user.userId);
     if (!user) return null;
-    const { password, ...result } = user;
+    const { password: _password, ...result } = user;
     return result;
   }
 
@@ -25,7 +25,7 @@ export class UsersController {
     if (body.name) data.name = body.name;
 
     const user = await this.usersService.update(req.user.userId, data);
-    const { password, ...result } = user;
+    const { password: _password, ...result } = user;
     return result;
   }
 }
