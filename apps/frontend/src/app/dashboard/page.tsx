@@ -1,30 +1,32 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { useRouter } from 'next/navigation'
+import { useUser, useAuth, SignOutButton, UserButton } from '@clerk/nextjs'
 import Link from 'next/link'
 import { apiFetch } from '@/lib/api'
 
 export default function DashboardPage() {
-  const router = useRouter()
-  const [userName, setUserName] = useState('Usuário')
+  const { user } = useUser()
+  const { getToken } = useAuth()
   const [upcomingEvents, setUpcomingEvents] = useState<any[]>([])
   const [todayDosesCount, setTodayDosesCount] = useState<number>(0)
   const [totalTakenCount, setTotalTakenCount] = useState<number>(0)
   const [totalSkippedCount, setTotalSkippedCount] = useState<number>(0)
 
-  const getToken = useCallback(() => {
-    return localStorage.getItem('pills_token')
-  }, [])
+  const getAuthHeaders = useCallback(async (): Promise<Record<string, string>> => {
+    const token = await getToken()
+    return token ? { Authorization: `Bearer ${token}` } : {}
+  }, [getToken])
 
-  const fetchTodayCounts = useCallback(async (token: string) => {
+  const fetchTodayCounts = useCallback(async () => {
     try {
+      const headers = await getAuthHeaders()
       const startOfDay = new Date();
       startOfDay.setHours(0, 0, 0, 0);
       const endOfDay = new Date();
       endOfDay.setHours(23, 59, 59, 999);
       const todayRes = await apiFetch<any[]>(`/api/v1/medications/events?startDate=${startOfDay.toISOString()}&endDate=${endOfDay.toISOString()}`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers
       });
       if (!todayRes.error && todayRes.data) {
         setTodayDosesCount(todayRes.data.length);
@@ -32,12 +34,13 @@ export default function DashboardPage() {
     } catch (e) {
       console.error('Error fetching today counts:', e);
     }
-  }, [])
+  }, [getAuthHeaders])
 
-  const fetchAllTimeCounts = useCallback(async (token: string) => {
+  const fetchAllTimeCounts = useCallback(async () => {
     try {
+      const headers = await getAuthHeaders()
       const allRes = await apiFetch<any[]>('/api/v1/medications/events', {
-        headers: { Authorization: `Bearer ${token}` }
+        headers
       });
       if (!allRes.error && allRes.data) {
         setTotalTakenCount(allRes.data.filter(e => e.status === 'TAKEN').length);
@@ -46,12 +49,13 @@ export default function DashboardPage() {
     } catch (e) {
       console.error('Error fetching all-time counts:', e);
     }
-  }, [])
+  }, [getAuthHeaders])
 
-  const fetchUpcomingEvents = useCallback(async (token: string) => {
+  const fetchUpcomingEvents = useCallback(async () => {
     try {
+      const headers = await getAuthHeaders()
       const evtsRes = await apiFetch<any[]>('/api/v1/medications/events/upcoming', {
-        headers: { Authorization: `Bearer ${token}` }
+        headers
       });
       if (!evtsRes.error && evtsRes.data) {
         setUpcomingEvents(evtsRes.data);
@@ -59,76 +63,48 @@ export default function DashboardPage() {
     } catch (e) {
       console.error('Error fetching upcoming events:', e);
     }
-  }, [])
+  }, [getAuthHeaders])
 
   useEffect(() => {
-    const token = getToken()
-    if (!token) {
-      router.push('/login')
-      return
-    }
-
     const fetchData = async () => {
-      // Buscar dados do usuário
-      try {
-        const userRes = await apiFetch<any>('/api/v1/users/me', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        if (!userRes.error && userRes.data) {
-          setUserName(userRes.data.name || userRes.data.email.split('@')[0]);
-        } else {
-          // Fallback: decode JWT
-          try {
-            const payload = JSON.parse(atob(token.split('.')[1]))
-            if (payload.email) setUserName(payload.email.split('@')[0])
-          } catch (e) { }
-        }
-      } catch (e) { }
-
-      // Buscar próximas doses e contagens em paralelo
       await Promise.all([
-        fetchUpcomingEvents(token),
-        fetchTodayCounts(token),
-        fetchAllTimeCounts(token),
+        fetchUpcomingEvents(),
+        fetchTodayCounts(),
+        fetchAllTimeCounts(),
       ]);
     }
-
     fetchData()
-  }, [router, getToken, fetchUpcomingEvents, fetchTodayCounts, fetchAllTimeCounts])
+  }, [fetchUpcomingEvents, fetchTodayCounts, fetchAllTimeCounts])
 
   const handleUpdateStatus = async (eventId: string, newStatus: string) => {
     try {
-      const token = getToken();
-      if (!token) return;
-
+      const headers = await getAuthHeaders()
       const res = await apiFetch(`/api/v1/medications/events/${eventId}/status`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
+          ...headers,
         },
         body: JSON.stringify({ status: newStatus })
       });
 
       if (!res.error) {
-        // Optimistically remove from upcoming list
         setUpcomingEvents(prev => prev.filter(e => e.id !== eventId));
-
-        // Optimistically update count cards
         if (newStatus === 'TAKEN') setTotalTakenCount(prev => prev + 1);
         if (newStatus === 'SKIPPED') setTotalSkippedCount(prev => prev + 1);
 
-        // Re-fetch from server for accuracy
         await Promise.all([
-          fetchUpcomingEvents(token),
-          fetchTodayCounts(token),
-          fetchAllTimeCounts(token),
+          fetchUpcomingEvents(),
+          fetchTodayCounts(),
+          fetchAllTimeCounts(),
         ]);
       }
     } catch (e) {
       console.error('Error updating event status:', e);
     }
   };
+
+  const userName = user?.firstName || user?.emailAddresses?.[0]?.emailAddress?.split('@')[0] || 'Usuário'
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--color-background)', display: 'flex' }}>
@@ -210,50 +186,35 @@ export default function DashboardPage() {
         </nav>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <Link
-            href="/perfil"
-            style={{
-              padding: '12px 16px',
-              borderRadius: '8px',
-              color: 'var(--color-primary)',
-              fontWeight: 600,
-              textDecoration: 'none',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-              background: 'transparent',
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.background = 'rgba(19, 127, 236, 0.1)'
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.background = 'transparent'
-            }}
-          >
-            ✏️ Editar Perfil
-          </Link>
+          <div style={{ padding: '8px 16px' }}>
+            <UserButton
+              appearance={{
+                elements: {
+                  avatarBox: { width: 32, height: 32 },
+                },
+              }}
+            />
+          </div>
 
-          <button
-            onClick={() => {
-              localStorage.removeItem('pills_token')
-              router.push('/')
-            }}
-            style={{
-              padding: '12px 16px',
-              background: 'transparent',
-              border: 'none',
-              color: 'var(--color-danger)',
-              fontWeight: 600,
-              cursor: 'pointer',
-              textAlign: 'left',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-              fontFamily: 'inherit',
-            }}
-          >
-            🚪 Sair
-          </button>
+          <SignOutButton>
+            <button
+              style={{
+                padding: '12px 16px',
+                background: 'transparent',
+                border: 'none',
+                color: 'var(--color-danger)',
+                fontWeight: 600,
+                cursor: 'pointer',
+                textAlign: 'left',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                fontFamily: 'inherit',
+              }}
+            >
+              🚪 Sair
+            </button>
+          </SignOutButton>
         </div>
       </aside>
 
@@ -387,12 +348,12 @@ export default function DashboardPage() {
                       </p>
                     </div>
                     <div style={{ display: 'flex', gap: '8px' }}>
-                      <button 
+                      <button
                         onClick={() => handleUpdateStatus(event.id, 'SKIPPED')}
                         style={{ background: 'transparent', border: '1px solid var(--color-danger)', color: 'var(--color-danger)', padding: '4px 12px', borderRadius: '6px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer' }}>
                         Pular
                       </button>
-                      <button 
+                      <button
                         onClick={() => handleUpdateStatus(event.id, 'TAKEN')}
                         style={{ background: 'var(--color-success)', border: 'none', color: '#fff', padding: '4px 12px', borderRadius: '6px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer' }}>
                         Tomar

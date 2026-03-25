@@ -1,7 +1,7 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useEffect, useState, useCallback } from 'react'
+import { useAuth, SignOutButton, UserButton } from '@clerk/nextjs'
 import Link from 'next/link'
 import { apiFetch } from '@/lib/api'
 
@@ -16,26 +16,24 @@ interface Medication {
 }
 
 export default function MedicamentosPage() {
-  const router = useRouter()
+  const { getToken } = useAuth()
   const [medications, setMedications] = useState<Medication[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
+  const getAuthHeaders = useCallback(async (): Promise<Record<string, string>> => {
+    const token = await getToken()
+    return token ? { Authorization: `Bearer ${token}` } : {}
+  }, [getToken])
+
   useEffect(() => {
     const fetchMedications = async () => {
-      const token = localStorage.getItem('pills_token')
-      if (!token) {
-        router.push('/login')
-        return
-      }
-
       try {
         setLoading(true)
+        const headers = await getAuthHeaders()
         const response = await apiFetch('/api/v1/medications', {
           method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
+          headers,
         })
 
         if (response.error) {
@@ -51,23 +49,16 @@ export default function MedicamentosPage() {
     }
 
     fetchMedications()
-  }, [router])
+  }, [getAuthHeaders])
 
   const handleDelete = async (id: string) => {
     if (!confirm('Tem certeza que deseja excluir este medicamento?')) return;
 
-    const token = localStorage.getItem('pills_token')
-    if (!token) {
-      router.push('/login')
-      return
-    }
-
     try {
+      const headers = await getAuthHeaders()
       const response = await apiFetch(`/api/v1/medications/${id}`, {
         method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+        headers,
       })
 
       if (response.error) {
@@ -160,50 +151,35 @@ export default function MedicamentosPage() {
         </nav>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <Link
-            href="/perfil"
-            style={{
-              padding: '12px 16px',
-              borderRadius: '8px',
-              color: 'var(--color-primary)',
-              fontWeight: 600,
-              textDecoration: 'none',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-              background: 'transparent',
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.background = 'rgba(19, 127, 236, 0.1)'
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.background = 'transparent'
-            }}
-          >
-            ✏️ Editar Perfil
-          </Link>
+          <div style={{ padding: '8px 16px' }}>
+            <UserButton
+              appearance={{
+                elements: {
+                  avatarBox: { width: 32, height: 32 },
+                },
+              }}
+            />
+          </div>
 
-          <button
-            onClick={() => {
-              localStorage.removeItem('pills_token')
-              router.push('/')
-            }}
-            style={{
-              padding: '12px 16px',
-              background: 'transparent',
-              border: 'none',
-              color: 'var(--color-danger)',
-              fontWeight: 600,
-              cursor: 'pointer',
-              textAlign: 'left',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-              fontFamily: 'inherit',
-            }}
-          >
-            🚪 Sair
-          </button>
+          <SignOutButton>
+            <button
+              style={{
+                padding: '12px 16px',
+                background: 'transparent',
+                border: 'none',
+                color: 'var(--color-danger)',
+                fontWeight: 600,
+                cursor: 'pointer',
+                textAlign: 'left',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                fontFamily: 'inherit',
+              }}
+            >
+              🚪 Sair
+            </button>
+          </SignOutButton>
         </div>
       </aside>
 

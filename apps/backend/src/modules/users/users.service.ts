@@ -17,7 +17,36 @@ export class UsersService {
     });
   }
 
-  async create(data: { email: string; name: string; password: string }) {
+  async findByClerkId(clerkId: string) {
+    return this.prisma.user.findUnique({
+      where: { clerkId },
+    });
+  }
+
+  async findOrCreateByClerkId(clerkId: string, email: string, name?: string) {
+    let user = await this.findByClerkId(clerkId);
+    if (user) return user;
+
+    // Try to find by email (legacy user) and link them
+    user = await this.findByEmail(email);
+    if (user) {
+      return this.prisma.user.update({
+        where: { id: user.id },
+        data: { clerkId },
+      });
+    }
+
+    // Create new user
+    return this.prisma.user.create({
+      data: {
+        clerkId,
+        email,
+        name: name || email.split('@')[0],
+      },
+    });
+  }
+
+  async create(data: { email: string; name: string; password?: string; clerkId?: string }) {
     return this.prisma.user.create({
       data,
     });

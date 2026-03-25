@@ -1,12 +1,14 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
+import { useAuth } from '@clerk/nextjs'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { apiFetch } from '@/lib/api'
 
 export default function NovoMedicamentoPage() {
   const router = useRouter()
+  const { getToken } = useAuth()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -24,20 +26,24 @@ export default function NovoMedicamentoPage() {
     notifyEmail: false,
   })
 
+  const getAuthHeaders = useCallback(async (): Promise<Record<string, string>> => {
+    const token = await getToken()
+    return token ? { Authorization: `Bearer ${token}` } : {}
+  }, [getToken])
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError(null)
 
     try {
-      const token = localStorage.getItem('pills_token')
-      if (!token) throw new Error('Not authenticated')
+      const headers = await getAuthHeaders()
 
       const response = await apiFetch('/api/v1/medications', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          ...headers,
         },
         body: JSON.stringify({
           ...formData,

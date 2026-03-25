@@ -2,10 +2,10 @@ import { Controller, Post, Body, UseGuards, Request, Get, Put, Patch, Param, Del
 import { MedicationsService } from './medications.service';
 import { CreateMedicationDto } from './dto/create-medication.dto';
 import { UpdateMedicationDto } from './dto/update-medication.dto';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { ClerkAuthGuard } from '../auth/clerk-auth.guard';
 
 @Controller('medications')
-@UseGuards(JwtAuthGuard)
+@UseGuards(ClerkAuthGuard)
 export class MedicationsController {
   constructor(private readonly medicationsService: MedicationsService) {}
 

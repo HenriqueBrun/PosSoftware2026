@@ -140,7 +140,7 @@ export default async function HomePage() {
       {/* CTA Buttons */}
       <div style={{ display: 'flex', gap: '12px' }}>
         <Link
-          href="/signup"
+          href="/sign-up"
           style={{
             background: 'var(--color-primary)',
             color: '#fff',
@@ -156,7 +156,7 @@ export default async function HomePage() {
           Criar Conta
         </Link>
         <Link
-          href="/login"
+          href="/sign-in"
           style={{
             background: 'transparent',
             color: 'var(--color-text-primary)',

@@ -1,7 +1,7 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useEffect, useState, useCallback } from 'react'
+import { useUser, useAuth, SignOutButton, UserButton } from '@clerk/nextjs'
 import Link from 'next/link'
 import { apiFetch } from '@/lib/api'
 
@@ -40,8 +40,8 @@ const MONTH_NAMES = [
 const WEEK_DAYS = ['DOM.', 'SEG.', 'TER.', 'QUA.', 'QUI.', 'SEX.', 'SÁB.']
 
 export default function AgendaPage() {
-  const router = useRouter()
-  const [userName, setUserName] = useState('Usuário')
+  const { user } = useUser()
+  const { getToken } = useAuth()
   const [events, setEvents] = useState<any[]>([])
 
   const [currentDate, setCurrentDate] = useState(new Date())
@@ -51,29 +51,19 @@ export default function AgendaPage() {
 
   const days = getDaysInMonth(year, month)
 
+  const userName = user?.firstName || user?.emailAddresses?.[0]?.emailAddress?.split('@')[0] || 'Usuário'
+
+  const getAuthHeaders = useCallback(async (): Promise<Record<string, string>> => {
+    const token = await getToken()
+    return token ? { Authorization: `Bearer ${token}` } : {}
+  }, [getToken])
+
   useEffect(() => {
-    // Basic auth check
-    const token = localStorage.getItem('pills_token')
-    if (!token) {
-      router.push('/login')
-      return
-    }
-
-    try {
-      if (token) {
-        const payload = JSON.parse(atob(token.split('.')[1]))
-        if (payload.email) {
-          setUserName(payload.email.split('@')[0])
-        }
-      }
-    } catch (e) { }
-
     const fetchEvents = async () => {
       try {
+        const headers = await getAuthHeaders()
         const response = await apiFetch<any[]>('/api/v1/medications/events', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
+          headers,
         })
         if (!response.error && response.data) {
           setEvents(response.data)
@@ -83,7 +73,7 @@ export default function AgendaPage() {
       }
     }
     fetchEvents()
-  }, [router, month, year])
+  }, [getAuthHeaders, month, year])
 
   const nextMonth = () => setCurrentDate(new Date(year, month + 1, 1))
   const prevMonth = () => setCurrentDate(new Date(year, month - 1, 1))
@@ -95,8 +85,8 @@ export default function AgendaPage() {
       if (evt.status !== 'PENDING') return false;
       const evtDate = new Date(evt.time)
       return evtDate.getFullYear() === targetDate.getFullYear() &&
-             evtDate.getMonth() === targetDate.getMonth() &&
-             evtDate.getDate() === targetDate.getDate()
+        evtDate.getMonth() === targetDate.getMonth() &&
+        evtDate.getDate() === targetDate.getDate()
     })
   }
 
@@ -180,50 +170,35 @@ export default function AgendaPage() {
         </nav>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <Link
-            href="/perfil"
-            style={{
-              padding: '12px 16px',
-              borderRadius: '8px',
-              color: 'var(--color-primary)',
-              fontWeight: 600,
-              textDecoration: 'none',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-              background: 'transparent',
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.background = 'rgba(19, 127, 236, 0.1)'
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.background = 'transparent'
-            }}
-          >
-            ✏️ Editar Perfil
-          </Link>
+          <div style={{ padding: '8px 16px' }}>
+            <UserButton
+              appearance={{
+                elements: {
+                  avatarBox: { width: 32, height: 32 },
+                },
+              }}
+            />
+          </div>
 
-          <button
-            onClick={() => {
-              localStorage.removeItem('pills_token')
-              router.push('/')
-            }}
-            style={{
-              padding: '12px 16px',
-              background: 'transparent',
-              border: 'none',
-              color: 'var(--color-danger)',
-              fontWeight: 600,
-              cursor: 'pointer',
-              textAlign: 'left',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-              fontFamily: 'inherit',
-            }}
-          >
-            🚪 Sair
-          </button>
+          <SignOutButton>
+            <button
+              style={{
+                padding: '12px 16px',
+                background: 'transparent',
+                border: 'none',
+                color: 'var(--color-danger)',
+                fontWeight: 600,
+                cursor: 'pointer',
+                textAlign: 'left',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                fontFamily: 'inherit',
+              }}
+            >
+              🚪 Sair
+            </button>
+          </SignOutButton>
         </div>
       </aside>
 
@@ -280,7 +255,7 @@ export default function AgendaPage() {
               const isToday = d.isCurrentMonth && d.day === new Date().getDate() && month === new Date().getMonth() && year === new Date().getFullYear();
 
               const dayEvents = getEventsForDay(d);
-              
+
               // Count medications to group them
               const uniqueMeds = Array.from(new Set(dayEvents.map(e => e.medication?.name || 'Medicamento')));
 
@@ -306,9 +281,9 @@ export default function AgendaPage() {
                   {uniqueMeds.length > 0 && (
                     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '2px', overflowY: 'auto' }}>
                       {uniqueMeds.map((medName, mIdx) => (
-                         <div key={mIdx} style={{ background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', border: '1px solid rgba(16, 185, 129, 0.3)', fontSize: '10px', padding: '4px 6px', borderRadius: '4px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontWeight: 600 }}>
-                           {medName}
-                         </div>
+                        <div key={mIdx} style={{ background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', border: '1px solid rgba(16, 185, 129, 0.3)', fontSize: '10px', padding: '4px 6px', borderRadius: '4px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontWeight: 600 }}>
+                          {medName}
+                        </div>
                       ))}
                     </div>
                   )}

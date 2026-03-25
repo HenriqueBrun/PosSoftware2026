@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
+import { useAuth } from '@clerk/nextjs'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { apiFetch } from '@/lib/api'
@@ -9,6 +10,7 @@ export default function EditarMedicamentoPage() {
   const router = useRouter()
   const params = useParams()
   const id = params.id as string
+  const { getToken } = useAuth()
 
   const [loading, setLoading] = useState(false)
   const [initialLoading, setInitialLoading] = useState(true)
@@ -27,20 +29,18 @@ export default function EditarMedicamentoPage() {
     notifyEmail: false,
   })
 
+  const getAuthHeaders = useCallback(async (): Promise<Record<string, string>> => {
+    const token = await getToken()
+    return token ? { Authorization: `Bearer ${token}` } : {}
+  }, [getToken])
+
   useEffect(() => {
     const fetchMedication = async () => {
-      const token = localStorage.getItem('pills_token')
-      if (!token) {
-        router.push('/login')
-        return
-      }
-
       try {
+        const headers = await getAuthHeaders()
         const response = await apiFetch(`/api/v1/medications/${id}`, {
           method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
+          headers,
         })
 
         if (response.error) {
@@ -72,7 +72,7 @@ export default function EditarMedicamentoPage() {
     if (id) {
       fetchMedication()
     }
-  }, [id, router])
+  }, [id, getAuthHeaders])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -80,14 +80,13 @@ export default function EditarMedicamentoPage() {
     setError(null)
 
     try {
-      const token = localStorage.getItem('pills_token')
-      if (!token) throw new Error('Not authenticated')
+      const headers = await getAuthHeaders()
 
       const response = await apiFetch(`/api/v1/medications/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          ...headers,
         },
         body: JSON.stringify({
           ...formData,
