@@ -223,7 +223,7 @@ export default function DashboardPage() {
         <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '48px' }}>
           <div>
             <h1 style={{ fontSize: '28px', fontWeight: 700, color: 'var(--color-text-primary)', marginBottom: '4px' }}>
-              Olá, {userName} 👋
+              Olá, {userName}! 👋
             </h1>
             <p style={{ color: 'var(--color-text-secondary)' }}>Aqui está o resumo dos seus medicamentos para hoje.</p>
           </div>
