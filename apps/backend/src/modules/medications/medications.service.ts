@@ -61,7 +61,7 @@ export class MedicationsService {
     }
 
     const events = [];
-    let currentTime = new Date(startDate);
+    const currentTime = new Date(startDate);
     while (currentTime <= endDate) {
       events.push({
         medicationId: medication.id,
