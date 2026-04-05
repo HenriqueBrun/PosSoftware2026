@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { useUser, useAuth, SignOutButton, UserButton } from '@clerk/nextjs'
 import Link from 'next/link'
 import { apiFetch } from '@/lib/api'
+import NotificationBell from '@/components/NotificationBell'
 
 export default function DashboardPage() {
   const { user } = useUser()
@@ -293,6 +294,11 @@ export default function DashboardPage() {
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Notification Control */}
+        <div style={{ marginBottom: '32px' }}>
+          <NotificationBell />
         </div>
 
         {/* Schedule List */}
