@@ -8,10 +8,14 @@ import {
   Request,
   HttpCode,
   HttpStatus,
+  Headers,
+  ForbiddenException,
 } from '@nestjs/common';
 import { NotificationsService } from './notifications.service';
 import { ClerkAuthGuard } from '../auth/clerk-auth.guard';
 import { ConfigService } from '@nestjs/config';
+
+// ─── Authenticated Endpoints (user-facing) ─────────────────────────────
 
 @Controller('notifications')
 @UseGuards(ClerkAuthGuard)
@@ -81,3 +85,37 @@ export class NotificationsController {
     return { message: 'Test notification sent' };
   }
 }
+
+// ─── Cron Endpoint (Vercel Cron / external triggers) ────────────────────
+
+@Controller('notifications')
+export class NotificationsCronController {
+  constructor(
+    private readonly notificationsService: NotificationsService,
+    private readonly configService: ConfigService,
+  ) {}
+
+  /**
+   * GET /notifications/cron
+   * Triggered by Vercel Cron Jobs. Not behind ClerkAuthGuard.
+   * Protected by CRON_SECRET header instead.
+   */
+  @Get('cron')
+  @HttpCode(HttpStatus.OK)
+  async cronHandler(
+    @Headers('authorization') authorization?: string,
+  ) {
+    // Verify CRON_SECRET to prevent unauthorized calls
+    const cronSecret = this.configService.get<string>('CRON_SECRET');
+    if (cronSecret) {
+      const provided = authorization?.replace('Bearer ', '');
+      if (provided !== cronSecret) {
+        throw new ForbiddenException('Invalid CRON_SECRET');
+      }
+    }
+
+    await this.notificationsService.checkAndNotifyDueEvents();
+    return { message: 'CRON executed', timestamp: new Date().toISOString() };
+  }
+}
+
