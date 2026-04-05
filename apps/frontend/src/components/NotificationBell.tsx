@@ -1,8 +1,10 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { useNotifications } from '@/hooks/useNotifications'
 
 export default function NotificationBell() {
+  const [isMounted, setIsMounted] = useState(false)
   const {
     permission,
     isSubscribed,
@@ -12,6 +14,15 @@ export default function NotificationBell() {
     unsubscribe,
     sendTest,
   } = useNotifications()
+
+  // Prevent hydration errors by not rendering anything until mounted on the client
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
+  if (!isMounted) {
+    return null
+  }
 
   if (isSubscribed && !isLoading) {
     return null;
