@@ -30,12 +30,18 @@ export class MedicationsService {
   private async generateSchedule(medication: any) {
     // Generate dates based on frequency
     // E.g. "4h", "6h", "8h", "12h", "daily"
+    //
+    // IMPORTANT: Use UTC hours throughout to avoid timezone drift.
+    // The frontend sends startTime as a plain "HH:mm" string representing
+    // the user's local intended time, and startDate as "YYYY-MM-DD" which
+    // parses to midnight UTC. We store times in UTC so the frontend can
+    // convert to local display via toLocaleTimeString().
     const startDate = new Date(medication.startDate);
     if (medication.startTime) {
       const [hours, minutes] = medication.startTime.split(':').map(Number);
-      startDate.setHours(hours, minutes, 0, 0);
+      startDate.setUTCHours(hours, minutes, 0, 0);
     } else if (startDate.getUTCHours() === 0) {
-      startDate.setUTCHours(8); // Default start time 08:00
+      startDate.setUTCHours(8, 0, 0, 0); // Default start time 08:00
     }
 
     const intervalsInHours: Record<string, number> = {
@@ -49,7 +55,7 @@ export class MedicationsService {
     const intervalHours = intervalsInHours[medication.frequency];
     if (!intervalHours) return;
 
-    // Default to 30 days if there's no end date, or maximum 1 year
+    // Default to 90 days if there's no end date
     let endDate = medication.endDate ? new Date(medication.endDate) : null;
     if (endDate && endDate.getUTCHours() === 0) {
       endDate.setUTCHours(23, 59, 59);
@@ -68,7 +74,7 @@ export class MedicationsService {
         time: new Date(currentTime),
         status: 'PENDING',
       });
-      currentTime.setHours(currentTime.getHours() + intervalHours);
+      currentTime.setUTCHours(currentTime.getUTCHours() + intervalHours);
     }
 
     if (events.length > 0) {
