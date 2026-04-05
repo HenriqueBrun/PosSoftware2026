@@ -31,17 +31,14 @@ export class MedicationsService {
     // Generate dates based on frequency
     // E.g. "4h", "6h", "8h", "12h", "daily"
     //
-    // IMPORTANT: Use UTC hours throughout to avoid timezone drift.
-    // The frontend sends startTime as a plain "HH:mm" string representing
-    // the user's local intended time, and startDate as "YYYY-MM-DD" which
-    // parses to midnight UTC. We store times in UTC so the frontend can
-    // convert to local display via toLocaleTimeString().
+    // The frontend sends startDate as a full ISO string with the correct
+    // UTC offset already applied (e.g. "2026-04-05T12:00:00.000Z" for
+    // 09:00 BRT). We use it directly. Only apply a default time if the
+    // date happens to be midnight UTC (legacy/fallback).
     const startDate = new Date(medication.startDate);
-    if (medication.startTime) {
-      const [hours, minutes] = medication.startTime.split(':').map(Number);
-      startDate.setUTCHours(hours, minutes, 0, 0);
-    } else if (startDate.getUTCHours() === 0) {
-      startDate.setUTCHours(8, 0, 0, 0); // Default start time 08:00
+    if (startDate.getUTCHours() === 0 && startDate.getUTCMinutes() === 0) {
+      // No time info — apply default 08:00 UTC
+      startDate.setUTCHours(8, 0, 0, 0);
     }
 
     const intervalsInHours: Record<string, number> = {

@@ -39,6 +39,11 @@ export default function NovoMedicamentoPage() {
     try {
       const headers = await getAuthHeaders()
 
+      // Combine date + time into a proper local Date so the timezone
+      // offset is baked into the ISO string sent to the backend.
+      // e.g. "2026-04-05" + "09:00" in BRT → "2026-04-05T12:00:00.000Z"
+      const combinedStart = new Date(`${formData.startDate}T${formData.startTime}:00`)
+
       const response = await apiFetch('/api/v1/medications', {
         method: 'POST',
         headers: {
@@ -47,6 +52,7 @@ export default function NovoMedicamentoPage() {
         },
         body: JSON.stringify({
           ...formData,
+          startDate: combinedStart.toISOString(),
           endDate: formData.endDate || undefined
         }),
       })
