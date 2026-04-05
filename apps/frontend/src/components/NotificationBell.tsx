@@ -13,6 +13,10 @@ export default function NotificationBell() {
     sendTest,
   } = useNotifications()
 
+  if (isSubscribed && !isLoading) {
+    return null;
+  }
+
   if (!isSupported) {
     return (
       <div style={{
