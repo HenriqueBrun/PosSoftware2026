@@ -23,7 +23,7 @@ export class NotificationsController {
   constructor(
     private readonly notificationsService: NotificationsService,
     private readonly configService: ConfigService,
-  ) {}
+  ) { }
 
   /**
    * GET /notifications/vapid-key
@@ -93,7 +93,7 @@ export class NotificationsCronController {
   constructor(
     private readonly notificationsService: NotificationsService,
     private readonly configService: ConfigService,
-  ) {}
+  ) { }
 
   /**
    * GET /notifications/cron
