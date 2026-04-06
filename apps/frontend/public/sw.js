@@ -25,6 +25,7 @@ self.addEventListener('push', (event) => {
 
   try {
     if (event.data) {
+      console.log('[SW] Push data text:', event.data.text());
       const payload = event.data.json();
       data = { ...data, ...payload };
     }
@@ -49,6 +50,8 @@ self.addEventListener('push', (event) => {
 
   event.waitUntil(
     self.registration.showNotification(data.title, options)
+      .then(() => console.log('[SW] Notification shown successfully'))
+      .catch((err) => console.error('[SW] Error showing notification:', err))
   );
 });
 
