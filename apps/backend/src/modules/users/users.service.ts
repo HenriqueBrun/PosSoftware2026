@@ -52,7 +52,7 @@ export class UsersService {
     });
   }
 
-  async update(id: string, data: { name?: string; password?: string }) {
+  async update(id: string, data: { name?: string; phone?: string; password?: string }) {
     return this.prisma.user.update({
       where: { id },
       data,

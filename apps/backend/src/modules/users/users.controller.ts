@@ -19,10 +19,11 @@ export class UsersController {
   @Put('me')
   async updateProfile(
     @Request() req: any,
-    @Body() body: { name?: string }
+    @Body() body: { name?: string; phone?: string }
   ) {
     const data: any = {};
     if (body.name) data.name = body.name;
+    if (body.phone !== undefined) data.phone = body.phone || null;
 
     const user = await this.usersService.update(req.user.userId, data);
     const { password: _password, ...result } = user;

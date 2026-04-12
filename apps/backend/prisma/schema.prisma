@@ -22,6 +22,7 @@ model User {
   clerkId   String?  @unique @map("clerk_id")
   email     String   @unique
   name      String
+  phone     String?  @map("phone")
   password  String?
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")

@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../../database/prisma.service';
+import { WhatsappService } from './whatsapp.service';
 import * as webpush from 'web-push';
 
 @Injectable()
@@ -10,6 +11,7 @@ export class NotificationsService {
   constructor(
     private prisma: PrismaService,
     private configService: ConfigService,
+    private whatsappService: WhatsappService,
   ) {
     const vapidPublicKey = this.configService.get<string>('VAPID_PUBLIC_KEY');
     const vapidPrivateKey = this.configService.get<string>('VAPID_PRIVATE_KEY');
@@ -91,8 +93,11 @@ export class NotificationsService {
     const dueEvents = await this.prisma.medicationEvent.findMany({
       where: {
         status: 'PENDING',
-        notifiedApp: false,
         time: { lte: now },
+        OR: [
+          { notifiedApp: false },
+          { notifiedWa: false },
+        ],
       },
       include: {
         medication: {
@@ -110,41 +115,59 @@ export class NotificationsService {
 
     for (const event of dueEvents) {
       const { medication } = event;
+      const updateData: any = {};
 
-      // Only notify if medication has notifyApp enabled
-      if (!medication.notifyApp) {
-        // Mark as notified anyway to avoid re-processing
-        await this.prisma.medicationEvent.update({
-          where: { id: event.id },
-          data: { notifiedApp: true },
-        });
-        continue;
+      // ─── Web Push ───────────────────────────────────────────────
+      if (!event.notifiedApp) {
+        if (medication.notifyApp) {
+          const payload = {
+            title: `💊 Hora do ${medication.name}`,
+            body: `Dose: ${medication.dosage} — Horário: ${new Date(event.time).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`,
+            icon: '/pill-icon.png',
+            badge: '/pill-badge.png',
+            data: {
+              url: '/dashboard',
+              eventId: event.id,
+              medicationId: medication.id,
+            },
+            tag: `med-${event.id}`,
+          };
+
+          try {
+            await this.sendPushToUser(medication.userId, payload);
+          } catch {
+            // Error already logged in sendPushToUser
+          }
+        }
+        updateData.notifiedApp = true;
       }
 
-      const payload = {
-        title: `💊 Hora do ${medication.name}`,
-        body: `Dose: ${medication.dosage} — Horário: ${new Date(event.time).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`,
-        icon: '/pill-icon.png',
-        badge: '/pill-badge.png',
-        data: {
-          url: '/dashboard',
-          eventId: event.id,
-          medicationId: medication.id,
-        },
-        tag: `med-${event.id}`, // prevents duplicate notifications
-      };
-
-      try {
-        await this.sendPushToUser(medication.userId, payload);
-      } catch {
-        // Error already logged in sendPushToUser
+      // ─── WhatsApp ──────────────────────────────────────────────
+      if (!event.notifiedWa) {
+        if (medication.notifyWa && medication.user?.phone) {
+          try {
+            const sent = await this.whatsappService.sendMedicationReminder(
+              medication.user.phone,
+              medication.name,
+              medication.dosage,
+              new Date(event.time),
+            );
+            if (sent) {
+              this.logger.log(`WhatsApp notification sent for event ${event.id}`);
+            }
+          } catch (error: any) {
+            this.logger.error(`WhatsApp notification failed for event ${event.id}: ${error.message}`);
+          }
+        }
+        updateData.notifiedWa = true;
       }
 
       // Mark event as notified
       await this.prisma.medicationEvent.update({
         where: { id: event.id },
-        data: { notifiedApp: true },
+        data: updateData,
       });
     }
   }
 }
+
