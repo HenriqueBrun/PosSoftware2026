@@ -1,0 +1,19 @@
+# Terraform
+*.tfstate
+*.tfstate.backup
+*.tfstate.*.backup
+.terraform/
+.terraform.lock.hcl
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Secrets — NUNCA commit!
+terraform.tfvars
+*.auto.tfvars
+
+# Local binaries
+.bin/

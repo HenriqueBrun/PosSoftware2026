@@ -1,0 +1,34 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# terraform.tfvars.example
+# Copie para terraform.tfvars e preencha com seus valores reais.
+# NUNCA commit terraform.tfvars — ele está no .gitignore.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ─── Vercel ──────────────────────────────────────────────────────────────────
+vercel_api_token = ""           # https://vercel.com/account/settings/tokens
+vercel_team_id   = "team_kzd4bq0Azario0ZPVLojoJli"
+
+# ─── Supabase ────────────────────────────────────────────────────────────────
+supabase_access_token    = ""   # https://supabase.com/dashboard/account/tokens
+supabase_organization_id = ""   # Organization Settings > Organization slug
+supabase_project_ref     = "evzusanajrsgqfqakqod"
+supabase_db_password     = ""
+
+# ─── Clerk ───────────────────────────────────────────────────────────────────
+clerk_publishable_key = ""      # pk_test_... or pk_live_...
+clerk_secret_key      = ""      # sk_test_... or sk_live_...
+
+# ─── Database ────────────────────────────────────────────────────────────────
+database_url = ""               # postgresql://...?pgbouncer=true
+direct_url   = ""               # postgresql://...:5432/postgres
+
+# ─── Web Push (VAPID) ────────────────────────────────────────────────────────
+vapid_public_key  = ""
+vapid_private_key = ""
+vapid_email       = "mailto:pills@example.com"
+
+# ─── Cron ────────────────────────────────────────────────────────────────────
+cron_secret = ""
+
+# ─── GitHub ──────────────────────────────────────────────────────────────────
+github_repo = "HenriqueBrun/PosSoftware2026"
