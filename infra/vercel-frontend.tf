@@ -12,16 +12,17 @@ resource "vercel_project" "frontend" {
   name      = "pills-frontend"
   framework = "nextjs"
 
-  git_repository = {
-    type = "github"
-    repo = var.github_repo
-  }
+  # git_repository gerenciado manualmente via Vercel Dashboard
+  # (requer GitHub Integration instalada no Vercel para funcionar via Terraform)
 
   root_directory = "apps/frontend"
 
   serverless_function_region = "gru1"
 
   automatically_expose_system_environment_variables = true
+
+  # Fix for provider bug
+  enable_affected_projects_deployments = false
 }
 
 # ─── Environment Variables ───────────────────────────────────────────────────
