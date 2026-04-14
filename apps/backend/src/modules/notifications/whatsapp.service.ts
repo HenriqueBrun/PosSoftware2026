@@ -33,29 +33,53 @@ export class WhatsappService {
    * Ensures Brazilian numbers have country code 55.
    */
   private formatPhoneE164(phone: string): string {
-    // Strip all non-digit characters
     let digits = phone.replace(/\D/g, '');
-
-    // If starts with 0, remove leading zero (local BR format)
-    if (digits.startsWith('0')) {
-      digits = digits.substring(1);
-    }
-
-    // If it doesn't start with country code 55, prepend it
-    if (!digits.startsWith('55')) {
-      digits = `55${digits}`;
-    }
-
+    if (digits.startsWith('0')) digits = digits.substring(1);
+    if (!digits.startsWith('55')) digits = `55${digits}`;
     return digits;
   }
 
   /**
-   * Send a text message via WhatsApp Cloud API
+   * Send a plain text message via WhatsApp Cloud API.
+   * NOTE: Only works within the 24-hour customer service window.
+   * For proactive messages use sendTemplateMessage() instead.
    */
   async sendTextMessage(phone: string, text: string): Promise<boolean> {
     if (!this.isConfigured()) {
+      this.logger.warn(`WhatsApp not configured — skipping text to ${phone.slice(-4)}`);
+      return false;
+    }
+
+    const formattedPhone = this.formatPhoneE164(phone);
+    const url = `https://graph.facebook.com/${this.apiVersion}/${this.phoneNumberId}/messages`;
+
+    return this.post(url, {
+      messaging_product: 'whatsapp',
+      recipient_type: 'individual',
+      to: formattedPhone,
+      type: 'text',
+      text: { preview_url: false, body: text },
+    }, formattedPhone);
+  }
+
+  /**
+   * Send a pre-approved Meta template message.
+   * Templates work outside the 24-hour window — ideal for proactive reminders.
+   *
+   * @param phone        Recipient phone number
+   * @param templateName Name of the approved template (e.g. 'lembrete_medicacao')
+   * @param languageCode BCP-47 language code (default: 'pt_BR')
+   * @param components   Template components with dynamic parameters
+   */
+  async sendTemplateMessage(
+    phone: string,
+    templateName: string,
+    languageCode: string,
+    components: object[],
+  ): Promise<boolean> {
+    if (!this.isConfigured()) {
       this.logger.warn(
-        `WhatsApp not configured — skipping message to ${phone.slice(-4)}`,
+        `WhatsApp not configured — skipping template "${templateName}" to ${phone.slice(-4)}`,
       );
       return false;
     }
@@ -63,17 +87,79 @@ export class WhatsappService {
     const formattedPhone = this.formatPhoneE164(phone);
     const url = `https://graph.facebook.com/${this.apiVersion}/${this.phoneNumberId}/messages`;
 
-    const body = {
+    return this.post(url, {
       messaging_product: 'whatsapp',
       recipient_type: 'individual',
       to: formattedPhone,
-      type: 'text',
-      text: {
-        preview_url: false,
-        body: text,
+      type: 'template',
+      template: {
+        name: templateName,
+        language: { code: languageCode },
+        components,
       },
-    };
+    }, formattedPhone);
+  }
 
+  /**
+   * Send a medication reminder using a pre-approved WhatsApp template.
+   *
+   * Expected template body (create in WhatsApp Manager with this text):
+   *
+   *   💊 *Hora do {{1}}!*
+   *
+   *   Dose: {{2}}
+   *   Horário: {{3}}
+   *
+   *   Acesse o Pills para marcar como tomado. ✅
+   *
+   * Variables:
+   *   {{1}} = nome do medicamento
+   *   {{2}} = dosagem
+   *   {{3}} = horário formatado (HH:mm)
+   *
+   * Configure via env:
+   *   WHATSAPP_TEMPLATE_NAME     (default: 'lembrete_medicacao')
+   *   WHATSAPP_TEMPLATE_LANGUAGE (default: 'pt_BR')
+   */
+  async sendMedicationReminder(
+    phone: string,
+    medicationName: string,
+    dosage: string,
+    time: Date,
+  ): Promise<boolean> {
+    const templateName =
+      this.configService.get<string>('WHATSAPP_TEMPLATE_NAME') ?? 'lembrete_medicacao';
+
+    const languageCode =
+      this.configService.get<string>('WHATSAPP_TEMPLATE_LANGUAGE') ?? 'pt_BR';
+
+    const timeStr = time.toLocaleTimeString('pt-BR', {
+      hour: '2-digit',
+      minute: '2-digit',
+      timeZone: 'America/Sao_Paulo',
+    });
+
+    const components = [
+      {
+        type: 'body',
+        parameters: [
+          { type: 'text', text: medicationName }, // {{1}}
+          { type: 'text', text: dosage },          // {{2}}
+          { type: 'text', text: timeStr },          // {{3}}
+        ],
+      },
+    ];
+
+    this.logger.log(
+      `Sending template "${templateName}" to ...${phone.slice(-4)} — ${medicationName} at ${timeStr}`,
+    );
+
+    return this.sendTemplateMessage(phone, templateName, languageCode, components);
+  }
+
+  // ─── Private HTTP helper ─────────────────────────────────────────────────
+
+  private async post(url: string, body: object, formattedPhone: string): Promise<boolean> {
     try {
       const response = await fetch(url, {
         method: 'POST',
@@ -94,38 +180,12 @@ export class WhatsappService {
 
       const data = await response.json();
       this.logger.log(
-        `WhatsApp message sent to ...${formattedPhone.slice(-4)} — ID: ${data?.messages?.[0]?.id || 'unknown'}`,
+        `WhatsApp message sent to ...${formattedPhone.slice(-4)} — ID: ${data?.messages?.[0]?.id ?? 'unknown'}`,
       );
       return true;
     } catch (error: any) {
-      this.logger.error(
-        `WhatsApp send failed: ${error.message || error}`,
-      );
+      this.logger.error(`WhatsApp send failed: ${error.message || error}`);
       return false;
     }
-  }
-
-  /**
-   * Send a medication reminder via WhatsApp
-   */
-  async sendMedicationReminder(
-    phone: string,
-    medicationName: string,
-    dosage: string,
-    time: Date,
-  ): Promise<boolean> {
-    const timeStr = time.toLocaleTimeString('pt-BR', {
-      hour: '2-digit',
-      minute: '2-digit',
-      timeZone: 'America/Sao_Paulo',
-    });
-
-    const text =
-      `💊 *Hora do ${medicationName}!*\n\n` +
-      `Dose: ${dosage}\n` +
-      `Horário: ${timeStr}\n\n` +
-      `Acesse o Pills para marcar como tomado. ✅`;
-
-    return this.sendTextMessage(phone, text);
   }
 }
