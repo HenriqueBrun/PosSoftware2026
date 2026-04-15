@@ -55,7 +55,6 @@ export class WhatsappService {
 
     return this.post(url, {
       messaging_product: 'whatsapp',
-      recipient_type: 'individual',
       to: formattedPhone,
       type: 'text',
       text: { preview_url: false, body: text },
@@ -89,7 +88,6 @@ export class WhatsappService {
 
     return this.post(url, {
       messaging_product: 'whatsapp',
-      recipient_type: 'individual',
       to: formattedPhone,
       type: 'template',
       template: {
