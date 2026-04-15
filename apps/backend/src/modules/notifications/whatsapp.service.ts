@@ -6,7 +6,7 @@ export class WhatsappService {
   private readonly logger = new Logger(WhatsappService.name);
   private readonly phoneNumberId: string | undefined;
   private readonly accessToken: string | undefined;
-  private readonly apiVersion = 'v21.0';
+  private readonly apiVersion = 'v25.0';
 
   constructor(private readonly configService: ConfigService) {
     this.phoneNumberId = this.configService.get<string>('WHATSAPP_PHONE_NUMBER_ID');
