@@ -160,6 +160,10 @@ export class WhatsappService {
   // ─── Private HTTP helper ─────────────────────────────────────────────────
 
   private async post(url: string, body: object, formattedPhone: string): Promise<boolean> {
+    this.logger.debug(
+      `Sending WhatsApp payload to ${formattedPhone}: ${JSON.stringify(body)}`,
+    );
+
     try {
       const response = await fetch(url, {
         method: 'POST',
@@ -180,7 +184,7 @@ export class WhatsappService {
 
       const data = await response.json();
       this.logger.log(
-        `WhatsApp message sent to ...${formattedPhone.slice(-4)} — ID: ${data?.messages?.[0]?.id ?? 'unknown'}`,
+        `WhatsApp response for ${formattedPhone}: ${JSON.stringify(data)}`,
       );
       return true;
     } catch (error: any) {
