@@ -11,7 +11,7 @@ vercel_team_id   = "team_kzd4bq0Azario0ZPVLojoJli"
 # ─── Supabase ────────────────────────────────────────────────────────────────
 supabase_access_token    = ""   # https://supabase.com/dashboard/account/tokens
 supabase_organization_id = ""   # Organization Settings > Organization slug
-supabase_project_ref     = "evzusanajrsgqfqakqod"
+supabase_project_ref     = "evzusanajrsgqfsqakqod"
 supabase_db_password     = ""
 
 # ─── Clerk ───────────────────────────────────────────────────────────────────
