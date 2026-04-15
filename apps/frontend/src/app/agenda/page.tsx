@@ -167,6 +167,21 @@ export default function AgendaPage() {
           >
             📅 Agenda
           </Link>
+          <Link
+            href="/minha-conta"
+            style={{
+              padding: '12px 16px',
+              borderRadius: '8px',
+              color: 'var(--color-text-secondary)',
+              fontWeight: 500,
+              textDecoration: 'none',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+            }}
+          >
+            👤 Minha Conta
+          </Link>
         </nav>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>

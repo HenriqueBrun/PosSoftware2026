@@ -218,6 +218,34 @@ export default function NovoMedicamentoPage() {
                   </div>
                 </div>
 
+                {/* Notificações Section */}
+                <div style={{ padding: '32px', borderBottom: '1px solid var(--color-border)' }}>
+                  <h3 style={{ fontSize: '11px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--color-primary)', marginBottom: '24px' }}>Notificações</h3>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}>
+                      <input
+                        type="checkbox"
+                        checked={formData.notifyApp}
+                        onChange={e => setFormData({ ...formData, notifyApp: e.target.checked })}
+                        style={{ width: '20px', height: '20px', accentColor: 'var(--color-primary)' }}
+                      />
+                      <span style={{ fontSize: '14px', fontWeight: 600, color: 'var(--color-text-primary)' }}>📱 Notificação no Aplicativo</span>
+                    </label>
+
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}>
+                      <input
+                        type="checkbox"
+                        checked={formData.notifyWa}
+                        onChange={e => setFormData({ ...formData, notifyWa: e.target.checked })}
+                        style={{ width: '20px', height: '20px', accentColor: 'var(--color-primary)' }}
+                      />
+                      <span style={{ fontSize: '14px', fontWeight: 600, color: 'var(--color-text-primary)' }}>💬 WhatsApp</span>
+                    </label>
+
+                  </div>
+                </div>
+
                 {/* Form Actions */}
                 <div style={{ padding: '32px', background: 'rgba(0,0,0,0.02)', display: 'flex', gap: '16px' }}>
                   <button
