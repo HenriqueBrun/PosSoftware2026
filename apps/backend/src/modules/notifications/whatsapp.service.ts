@@ -173,7 +173,7 @@ export class WhatsappService {
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         this.logger.error(
-          `WhatsApp API error (${response.status}): ${JSON.stringify(errorData)}`,
+          `WhatsApp API error (${response.status}) for ${formattedPhone}: ${JSON.stringify(errorData)}`,
         );
         return false;
       }
