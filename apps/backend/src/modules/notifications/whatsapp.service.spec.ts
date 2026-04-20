@@ -4,7 +4,6 @@ import { ConfigService } from '@nestjs/config';
 
 describe('WhatsappService', () => {
   let service: WhatsappService;
-  let configService: ConfigService;
 
   const mockConfigService = {
     get: jest.fn((key: string) => {
@@ -16,9 +15,9 @@ describe('WhatsappService', () => {
 
   beforeEach(async () => {
     jest.resetAllMocks();
-    
+
     // Mock global fetch
-    global.fetch = jest.fn().mockImplementation(() => 
+    global.fetch = jest.fn().mockImplementation(() =>
       Promise.resolve({
         ok: true,
         json: () => Promise.resolve({ messaging_product: 'whatsapp', contacts: [], messages: [] }),
@@ -42,7 +41,6 @@ describe('WhatsappService', () => {
     }).compile();
 
     service = module.get<WhatsappService>(WhatsappService);
-    configService = module.get<ConfigService>(ConfigService);
   });
 
   afterEach(() => {

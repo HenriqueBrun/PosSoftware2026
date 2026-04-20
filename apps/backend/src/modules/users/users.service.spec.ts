@@ -4,7 +4,6 @@ import { PrismaService } from '../../database/prisma.service';
 
 describe('UsersService', () => {
   let service: UsersService;
-  let prisma: PrismaService;
 
   const mockPrisma = {
     user: {
@@ -27,7 +26,6 @@ describe('UsersService', () => {
     }).compile();
 
     service = module.get<UsersService>(UsersService);
-    prisma = module.get<PrismaService>(PrismaService);
   });
 
   afterEach(() => {
@@ -77,7 +75,7 @@ describe('UsersService', () => {
       const clerkId = 'user_123';
       const email = 'test@example.com';
       const user = { id: '1', email };
-      
+
       mockPrisma.user.findUnique.mockResolvedValueOnce(null); // By clerkId
       mockPrisma.user.findUnique.mockResolvedValueOnce(user); // By email
       mockPrisma.user.update.mockResolvedValue({ ...user, clerkId });
@@ -90,7 +88,7 @@ describe('UsersService', () => {
     it('should create new user if not found', async () => {
       const clerkId = 'user_123';
       const email = 'test@example.com';
-      
+
       mockPrisma.user.findUnique.mockResolvedValue(null);
       mockPrisma.user.create.mockResolvedValue({ id: '1', clerkId, email });
 

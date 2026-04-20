@@ -6,7 +6,6 @@ import { NotificationsService } from '../notifications/notifications.service';
 
 describe('MedicationsService', () => {
   let service: MedicationsService;
-  let prisma: PrismaService;
 
   const mockPrisma = {
     medication: {
@@ -44,7 +43,6 @@ describe('MedicationsService', () => {
     }).compile();
 
     service = module.get<MedicationsService>(MedicationsService);
-    prisma = module.get<PrismaService>(PrismaService);
   });
 
   afterEach(() => {
@@ -66,12 +64,12 @@ describe('MedicationsService', () => {
         criticality: 'MEDIUM' as any,
       };
       const medication = { id: 'med-1', ...dto, startDate: new Date(dto.startDate), userId };
-      
+
       mockPrisma.medication.create.mockResolvedValue(medication);
       mockPrisma.medicationEvent.createMany.mockResolvedValue({ count: 10 });
 
       const result = await service.create(userId, dto as any);
-      
+
       expect(result).toEqual(medication);
       expect(mockPrisma.medication.create).toHaveBeenCalled();
       expect(mockPrisma.medicationEvent.createMany).toHaveBeenCalled();
@@ -114,19 +112,19 @@ describe('MedicationsService', () => {
       const status = 'TAKEN';
       const initialStock = 5;
       const lowStockAlert = 5;
-      
+
       const medication = { id: 'med-1', name: 'Med 1', stock: initialStock, lowStockAlert, userId };
       const event = { id: eventId, medicationId: 'med-1', medication };
 
       mockPrisma.medicationEvent.findFirst.mockResolvedValue(event);
-      mockPrisma.medicationEvent.update.mockResolvedValue({ 
-        ...event, 
-        status, 
-        medication: { ...medication } 
+      mockPrisma.medicationEvent.update.mockResolvedValue({
+        ...event,
+        status,
+        medication: { ...medication }
       });
-      mockPrisma.medication.update.mockResolvedValue({ 
-        ...medication, 
-        stock: initialStock - 1 
+      mockPrisma.medication.update.mockResolvedValue({
+        ...medication,
+        stock: initialStock - 1
       });
 
       await service.updateEventStatus(eventId, userId, status);

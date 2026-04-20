@@ -9,8 +9,6 @@ jest.mock('web-push');
 
 describe('NotificationsService', () => {
   let service: NotificationsService;
-  let prisma: PrismaService;
-  let whatsappService: WhatsappService;
 
   const mockPrisma = {
     pushSubscription: {
@@ -48,8 +46,6 @@ describe('NotificationsService', () => {
     }).compile();
 
     service = module.get<NotificationsService>(NotificationsService);
-    prisma = module.get<PrismaService>(PrismaService);
-    whatsappService = module.get<WhatsappService>(WhatsappService);
   });
 
   afterEach(() => {
@@ -74,7 +70,7 @@ describe('NotificationsService', () => {
       (webpush.sendNotification as jest.Mock).mockResolvedValue({});
 
       await service.sendPushToUser('user-1', { title: 'test' });
-      
+
       expect(webpush.sendNotification).toHaveBeenCalled();
     });
 
@@ -84,7 +80,7 @@ describe('NotificationsService', () => {
       (webpush.sendNotification as jest.Mock).mockRejectedValue({ statusCode: 410 });
 
       await service.sendPushToUser('user-1', { title: 'test' });
-      
+
       expect(mockPrisma.pushSubscription.delete).toHaveBeenCalledWith({ where: { id: '1' } });
     });
   });

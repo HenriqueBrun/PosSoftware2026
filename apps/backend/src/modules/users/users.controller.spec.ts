@@ -2,11 +2,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { ClerkAuthGuard } from '../auth/clerk-auth.guard';
-import { ExecutionContext } from '@nestjs/common';
 
 describe('UsersController', () => {
   let controller: UsersController;
-  let service: UsersService;
 
   const mockUsersService = {
     findById: jest.fn(),
@@ -32,7 +30,6 @@ describe('UsersController', () => {
       .compile();
 
     controller = module.get<UsersController>(UsersController);
-    service = module.get<UsersService>(UsersService);
   });
 
   it('should be defined', () => {
