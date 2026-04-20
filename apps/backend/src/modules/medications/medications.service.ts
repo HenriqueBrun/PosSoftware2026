@@ -1,10 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateMedicationDto } from './dto/create-medication.dto';
 import { PrismaService } from '../../database/prisma.service';
+import { NotificationsService } from '../notifications/notifications.service';
 
 @Injectable()
 export class MedicationsService {
-  constructor(private prisma: PrismaService) { }
+  constructor(
+    private prisma: PrismaService,
+    private notificationsService: NotificationsService,
+  ) { }
 
   async create(userId: string, createMedicationDto: CreateMedicationDto) {
     const medication = await this.prisma.medication.create({
@@ -19,6 +23,8 @@ export class MedicationsService {
         notifySms: createMedicationDto.notifySms || false,
         notifyWa: createMedicationDto.notifyWa || false,
         notifyEmail: createMedicationDto.notifyEmail || false,
+        stock: createMedicationDto.stock,
+        lowStockAlert: createMedicationDto.lowStockAlert,
         userId,
       },
     });
@@ -184,9 +190,36 @@ export class MedicationsService {
       throw new NotFoundException('Medication event not found or unauthorized');
     }
 
-    return this.prisma.medicationEvent.update({
+    const updatedEvent = await this.prisma.medicationEvent.update({
       where: { id: eventId },
       data: { status },
+      include: {
+        medication: true,
+      },
     });
+
+    // ─── Stock Logic ──────────────────────────────────────────────────────
+    if (status === 'TAKEN' && updatedEvent.medication.stock !== null) {
+      const newStock = Math.max(0, updatedEvent.medication.stock - 1);
+      
+      const updatedMedication = await this.prisma.medication.update({
+        where: { id: updatedEvent.medicationId },
+        data: { stock: newStock },
+      });
+
+      // Check for low stock alert
+      if (
+        updatedMedication.lowStockAlert !== null &&
+        newStock <= updatedMedication.lowStockAlert
+      ) {
+        await this.notificationsService.sendLowStockAlert(
+          userId,
+          updatedMedication.name,
+          newStock,
+        );
+      }
+    }
+
+    return updatedEvent;
   }
 }

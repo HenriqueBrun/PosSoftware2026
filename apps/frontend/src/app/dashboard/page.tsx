@@ -354,8 +354,27 @@ export default function DashboardPage() {
                       <h4 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: 'var(--color-text-primary)' }}>
                         {event.medication?.name || 'Medicamento'}
                       </h4>
-                      <p style={{ margin: 0, fontSize: '14px', color: 'var(--color-text-secondary)' }}>
+                      <p style={{ margin: 0, fontSize: '12px', color: 'var(--color-text-secondary)' }}>
                         {event.medication?.dosage || ''}
+                        {event.medication?.stock !== null && (
+                          <span style={{ 
+                            marginLeft: '8px', 
+                            padding: '2px 6px', 
+                            borderRadius: '4px', 
+                            background: event.medication.lowStockAlert !== null && event.medication.stock <= event.medication.lowStockAlert 
+                              ? 'rgba(239, 68, 68, 0.1)' 
+                              : 'rgba(0, 0, 0, 0.05)',
+                            color: event.medication.lowStockAlert !== null && event.medication.stock <= event.medication.lowStockAlert 
+                              ? 'var(--color-danger)' 
+                              : 'var(--color-text-secondary)',
+                            fontWeight: event.medication.lowStockAlert !== null && event.medication.stock <= event.medication.lowStockAlert 
+                              ? '700' 
+                              : '500'
+                          }}>
+                            📦 {event.medication.stock} unidades
+                            {event.medication.lowStockAlert !== null && event.medication.stock <= event.medication.lowStockAlert && ' (Baixo!)'}
+                          </span>
+                        )}
                       </p>
                     </div>
                   </div>

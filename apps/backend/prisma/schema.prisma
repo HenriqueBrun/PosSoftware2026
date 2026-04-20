@@ -60,6 +60,9 @@ model Medication {
   notifyWa     Boolean     @default(false) @map("notify_wa")
   notifyEmail  Boolean     @default(false) @map("notify_email")
 
+  stock        Int?        @map("stock")
+  lowStockAlert Int?        @map("low_stock_alert")
+
   userId       String      @map("user_id")
   user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
 

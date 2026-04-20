@@ -169,5 +169,28 @@ export class NotificationsService {
       });
     }
   }
+
+  // ─── Stock Alerts ─────────────────────────────────────────────────────
+
+  async sendLowStockAlert(userId: string, medicationName: string, remainingStock: number) {
+    this.logger.log(`Sending low stock alert to user ${userId} for ${medicationName} (${remainingStock} left)`);
+
+    const payload = {
+      title: `⚠️ Estoque Baixo: ${medicationName}`,
+      body: `Você tem apenas ${remainingStock} comprimido(s) restante(s). Lembre-se de repor seu estoque em breve!`,
+      icon: '/pill-icon-warning.png',
+      badge: '/pill-badge.png',
+      data: {
+        url: '/dashboard',
+      },
+      tag: `stock-${medicationName}`,
+    };
+
+    try {
+      await this.sendPushToUser(userId, payload);
+    } catch (error: any) {
+      this.logger.error(`Failed to send low stock push: ${error.message}`);
+    }
+  }
 }
 

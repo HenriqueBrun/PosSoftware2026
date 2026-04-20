@@ -9,4 +9,6 @@ export class UpdateMedicationDto {
   notifySms?: boolean;
   notifyWa?: boolean;
   notifyEmail?: boolean;
+  stock?: number;
+  lowStockAlert?: number;
 }

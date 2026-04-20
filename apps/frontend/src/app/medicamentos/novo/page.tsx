@@ -24,6 +24,8 @@ export default function NovoMedicamentoPage() {
     notifySms: false,
     notifyWa: false,
     notifyEmail: false,
+    stock: '',
+    lowStockAlert: '',
   })
 
   const getAuthHeaders = useCallback(async (): Promise<Record<string, string>> => {
@@ -52,6 +54,8 @@ export default function NovoMedicamentoPage() {
         },
         body: JSON.stringify({
           ...formData,
+          stock: formData.stock ? parseInt(formData.stock) : undefined,
+          lowStockAlert: formData.lowStockAlert ? parseInt(formData.lowStockAlert) : undefined,
           startDate: combinedStart.toISOString(),
           endDate: formData.endDate || undefined
         }),
@@ -140,6 +144,29 @@ export default function NovoMedicamentoPage() {
                         </select>
                       </label>
                     </div>
+                  </div>
+                </div>
+
+                {/* Estoque Section */}
+                <div style={{ padding: '32px', borderBottom: '1px solid var(--color-border)', background: 'rgba(59, 130, 246, 0.03)' }}>
+                  <h3 style={{ fontSize: '11px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--color-primary)', marginBottom: '24px' }}>Controle de Estoque (Opcional)</h3>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+                    <label style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                      <span style={{ fontSize: '14px', fontWeight: 600, color: 'var(--color-text-primary)' }}>Quantidade em Estoque</span>
+                      <input
+                        value={formData.stock}
+                        onChange={e => setFormData({ ...formData, stock: e.target.value })}
+                        style={{ height: '48px', padding: '0 16px', borderRadius: '8px', border: '1px solid var(--color-border)', outline: 'none', background: 'var(--color-background)', color: 'var(--color-text-primary)' }}
+                        placeholder="Ex: 30" type="number" />
+                    </label>
+                    <label style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                      <span style={{ fontSize: '14px', fontWeight: 600, color: 'var(--color-text-primary)' }}>Avisar quando restar</span>
+                      <input
+                        value={formData.lowStockAlert}
+                        onChange={e => setFormData({ ...formData, lowStockAlert: e.target.value })}
+                        style={{ height: '48px', padding: '0 16px', borderRadius: '8px', border: '1px solid var(--color-border)', outline: 'none', background: 'var(--color-background)', color: 'var(--color-text-primary)' }}
+                        placeholder="Ex: 5" type="number" />
+                    </label>
                   </div>
                 </div>
 

@@ -39,3 +39,6 @@ apps/backend/generated/
 
 # Testing
 coverage/
+
+# Project Organization
+TODO.md

@@ -9,7 +9,10 @@
     "lint": "eslint \"{src,apps,libs}/**/*.ts\" --fix",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
-    "db:push": "prisma db push"
+    "db:push": "prisma db push",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:cov": "jest --coverage"
   },
   "dependencies": {
     "@clerk/backend": "^3.2.2",
@@ -33,8 +36,10 @@
   "devDependencies": {
     "@nestjs/cli": "^11.0.0",
     "@nestjs/schematics": "^11.0.0",
+    "@nestjs/testing": "^11.1.19",
     "@types/bcryptjs": "^2.4.6",
     "@types/express": "^5.0.0",
+    "@types/jest": "^30.0.0",
     "@types/node": "^22.0.0",
     "@types/passport-jwt": "^4.0.1",
     "@types/pg": "^8.11.0",
@@ -44,6 +49,8 @@
     "eslint": "^9.39.4",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.5",
+    "jest": "^30.3.0",
+    "ts-jest": "^29.4.9",
     "ts-loader": "^9.5.0",
     "ts-node": "^10.9.0",
     "typescript": "^5.7.0",
