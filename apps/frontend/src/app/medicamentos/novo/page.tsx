@@ -5,6 +5,7 @@ import { useAuth } from '@clerk/nextjs'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { apiFetch } from '@/lib/api'
+import PrescriptionScanner from '@/components/PrescriptionScanner'
 
 export default function NovoMedicamentoPage() {
   const router = useRouter()
@@ -32,6 +33,22 @@ export default function NovoMedicamentoPage() {
     const token = await getToken()
     return token ? { Authorization: `Bearer ${token}` } : {}
   }, [getToken])
+
+  const handleMedicationFromPrescription = useCallback((medication: {
+    name: string
+    dosage: string
+    frequency: '4h' | '6h' | '8h' | '12h' | 'daily'
+    criticality: 'low' | 'medium' | 'high'
+    notes?: string
+  }) => {
+    setFormData(prev => ({
+      ...prev,
+      name: medication.name,
+      dosage: medication.dosage,
+      frequency: medication.frequency,
+      criticality: medication.criticality,
+    }))
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -94,6 +111,12 @@ export default function NovoMedicamentoPage() {
                 <h1 className="text-4xl font-black tracking-tight" style={{ fontSize: '2rem', fontWeight: 900, color: 'var(--color-text-primary)' }}>Novo Medicamento</h1>
                 <p className="text-lg" style={{ color: 'var(--color-text-secondary)' }}>Configure seus lembretes e cuide bem de você.</p>
               </div>
+
+              {/* Prescription Scanner */}
+              <PrescriptionScanner
+                onMedicationSelect={handleMedicationFromPrescription}
+                getAuthHeaders={getAuthHeaders}
+              />
 
               {error && (
                 <div style={{ padding: '12px', background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', borderRadius: '8px', marginBottom: '20px', textAlign: 'center' }}>

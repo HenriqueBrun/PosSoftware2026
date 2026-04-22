@@ -6,6 +6,7 @@ import { AuthModule } from './modules/auth/auth.module'
 import { UsersModule } from './modules/users/users.module'
 import { MedicationsModule } from './modules/medications/medications.module'
 import { NotificationsModule } from './modules/notifications/notifications.module'
+import { PrescriptionOcrModule } from './modules/prescription-ocr/prescription-ocr.module'
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
     UsersModule,
     MedicationsModule,
     NotificationsModule,
+    PrescriptionOcrModule,
   ],
 })
 export class AppModule {}
