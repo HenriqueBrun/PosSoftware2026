@@ -106,10 +106,10 @@ Responda sempre em português do Brasil.`,
         dosage: med.dosage,
         frequency: med.frequency,
         criticality: med.criticality,
-        notes: med.notes,
+        notes: med.notes ?? undefined,
       })),
-      doctorName: parsed.doctor_name,
-      patientName: parsed.patient_name,
+      doctorName: parsed.doctor_name ?? undefined,
+      patientName: parsed.patient_name ?? undefined,
     };
   }
 }
