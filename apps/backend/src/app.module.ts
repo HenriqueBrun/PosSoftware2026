@@ -12,7 +12,7 @@ import { PrescriptionOcrModule } from './modules/prescription-ocr/prescription-o
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '../../.env',
+      // envFilePath: '../../.env',
     }),
     DatabaseModule,
     HealthModule,
@@ -20,7 +20,7 @@ import { PrescriptionOcrModule } from './modules/prescription-ocr/prescription-o
     UsersModule,
     MedicationsModule,
     NotificationsModule,
-    PrescriptionOcrModule,
+    // PrescriptionOcrModule,
   ],
 })
 export class AppModule {}
