@@ -37,12 +37,12 @@ export class PrescriptionOcrService {
             ),
           notes: z
             .string()
-            .optional()
+            .nullable()
             .describe('Observações adicionais encontradas na receita, ex: "tomar em jejum", "antes de dormir"'),
         }),
       ),
-      doctor_name: z.string().optional().describe('Nome do médico, se legível na receita'),
-      patient_name: z.string().optional().describe('Nome do paciente, se legível na receita'),
+      doctor_name: z.string().nullable().describe('Nome do médico, se legível na receita'),
+      patient_name: z.string().nullable().describe('Nome do paciente, se legível na receita'),
     });
 
     const openai = new OpenAI({ apiKey: this.apiKey });

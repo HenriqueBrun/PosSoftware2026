@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core'
 import { AppModule } from './app.module'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 let cachedApp: any
 
 async function bootstrapServer() {
@@ -10,9 +10,14 @@ async function bootstrapServer() {
   app.setGlobalPrefix('api/v1')
 
   app.enableCors({
-    origin: process.env.FRONTEND_URL ?? '*',
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+    origin: [
+      'http://localhost:3000',
+      'https://pills-frontend.vercel.app',
+      process.env.FRONTEND_URL,
+    ].filter(Boolean) as string[],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
   })
 
   if (process.env.VERCEL) {
@@ -30,7 +35,7 @@ if (!process.env.VERCEL) {
   bootstrapServer()
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 export default async (req: any, res: any) => {
   if (!cachedApp) {
     await bootstrapServer()

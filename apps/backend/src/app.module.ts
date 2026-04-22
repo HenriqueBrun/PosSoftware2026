@@ -7,12 +7,10 @@ import { UsersModule } from './modules/users/users.module'
 import { MedicationsModule } from './modules/medications/medications.module'
 import { NotificationsModule } from './modules/notifications/notifications.module'
 import { PrescriptionOcrModule } from './modules/prescription-ocr/prescription-ocr.module'
-
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      // envFilePath: '../../.env',
     }),
     DatabaseModule,
     HealthModule,
@@ -20,7 +18,7 @@ import { PrescriptionOcrModule } from './modules/prescription-ocr/prescription-o
     UsersModule,
     MedicationsModule,
     NotificationsModule,
-    // PrescriptionOcrModule,
+    PrescriptionOcrModule,
   ],
 })
 export class AppModule {}
