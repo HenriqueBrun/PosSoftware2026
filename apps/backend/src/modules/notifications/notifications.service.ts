@@ -191,6 +191,8 @@ export class NotificationsService {
     } catch (error: any) {
       this.logger.error(`Failed to send low stock push: ${error.message}`);
     }
+  }
+
   // ─── WhatsApp Testing ──────────────────────────────────────────────────
 
   async sendTestWhatsapp(userId: string) {
