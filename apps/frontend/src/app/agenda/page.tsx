@@ -186,7 +186,7 @@ export default function AgendaPage() {
             })}
           </div>
         </div>
-
+        </div>
       </main>
     </div>
   )

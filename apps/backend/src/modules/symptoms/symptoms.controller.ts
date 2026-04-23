@@ -19,16 +19,16 @@ export class SymptomsController {
 
   @Post()
   create(@Request() req: any, @Body() createSymptomDto: CreateSymptomDto) {
-    return this.symptomsService.create(req.user.id, createSymptomDto);
+    return this.symptomsService.create(req.user.userId, createSymptomDto);
   }
 
   @Get()
   findAll(@Request() req: any) {
-    return this.symptomsService.findAll(req.user.id);
+    return this.symptomsService.findAll(req.user.userId);
   }
 
   @Delete(':id')
   remove(@Request() req: any, @Param('id') id: string) {
-    return this.symptomsService.remove(req.user.id, id);
+    return this.symptomsService.remove(req.user.userId, id);
   }
 }

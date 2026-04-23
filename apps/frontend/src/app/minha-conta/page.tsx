@@ -346,6 +346,7 @@ export default function MinhaContaPage() {
             {saving ? 'Salvando...' : 'Salvar Alterações'}
           </button>
         </form>
+        </div>
       </main>
     </div>
   )

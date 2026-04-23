@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useCallback } from 'react'
+import Image from 'next/image'
 
 interface ExtractedMedication {
   name: string
@@ -270,15 +271,18 @@ export default function PrescriptionScanner({
               }}
             >
               {imagePreview ? (
-                <img
+                <Image
                   src={imagePreview}
                   alt="Preview da receita"
+                  width={600}
+                  height={300}
                   style={{
                     maxWidth: '100%',
                     maxHeight: '300px',
                     borderRadius: '8px',
                     objectFit: 'contain',
                   }}
+                  unoptimized
                 />
               ) : (
                 <>
