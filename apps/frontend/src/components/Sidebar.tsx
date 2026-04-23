@@ -45,7 +45,7 @@ export default function Sidebar() {
       </nav>
 
       <div className="sidebar-footer">
-        <UserButton afterSignOutUrl="/" showName />
+        <UserButton showName />
       </div>
     </aside>
   )
