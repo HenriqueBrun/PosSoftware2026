@@ -191,6 +191,26 @@ export class NotificationsService {
     } catch (error: any) {
       this.logger.error(`Failed to send low stock push: ${error.message}`);
     }
+  // ─── WhatsApp Testing ──────────────────────────────────────────────────
+
+  async sendTestWhatsapp(userId: string) {
+    const user = await this.prisma.user.findFirst({
+      where: { id: userId },
+    });
+
+    if (!user?.phone) {
+      this.logger.warn(`User ${userId} has no phone number for WhatsApp test`);
+      throw new Error('Você precisa cadastrar um número de telefone no seu perfil primeiro.');
+    }
+
+    this.logger.log(`Sending manual WhatsApp test to ...${user.phone.slice(-4)}`);
+
+    return this.whatsappService.sendMedicationReminder(
+      user.phone,
+      'Medicamento de Teste',
+      '1 comprimido',
+      new Date(),
+    );
   }
 }
 

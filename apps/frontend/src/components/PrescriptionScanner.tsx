@@ -229,6 +229,24 @@ export default function PrescriptionScanner({
       </div>
 
       <div style={{ padding: '24px' }}>
+        {/* Tip for better results */}
+        {!result && !loading && (
+          <div style={{ 
+            padding: '12px 16px', 
+            background: 'rgba(59, 130, 246, 0.05)', 
+            borderRadius: '10px', 
+            marginBottom: '20px',
+            fontSize: '13px',
+            color: 'var(--color-text-secondary)',
+            display: 'flex',
+            gap: '10px',
+            alignItems: 'center'
+          }}>
+            <span style={{ fontSize: '18px' }}>💡</span>
+            <span>Certifique-se de que a foto esteja bem iluminada e o texto legível para melhores resultados.</span>
+          </div>
+        )}
+
         {/* Upload Area */}
         {!result && (
           <>

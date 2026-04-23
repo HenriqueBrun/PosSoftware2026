@@ -7,6 +7,7 @@ import { UsersModule } from './modules/users/users.module'
 import { MedicationsModule } from './modules/medications/medications.module'
 import { NotificationsModule } from './modules/notifications/notifications.module'
 import { PrescriptionOcrModule } from './modules/prescription-ocr/prescription-ocr.module'
+import { SymptomsModule } from './modules/symptoms/symptoms.module'
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -19,6 +20,7 @@ import { PrescriptionOcrModule } from './modules/prescription-ocr/prescription-o
     MedicationsModule,
     NotificationsModule,
     PrescriptionOcrModule,
+    SymptomsModule,
   ],
 })
 export class AppModule {}

@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { apiFetch } from '@/lib/api'
 import PrescriptionScanner from '@/components/PrescriptionScanner'
+import Sidebar from '@/components/Sidebar'
 
 export default function NovoMedicamentoPage() {
   const router = useRouter()
@@ -91,21 +92,10 @@ export default function NovoMedicamentoPage() {
   }
 
   return (
-    <div className="bg-slate-50 font-display text-slate-900 min-h-screen" style={{ backgroundColor: 'var(--color-surface)' }}>
-      <div className="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
-        <div className="layout-container flex h-full grow flex-col">
-          {/* Top Navigation Bar */}
-          <header className="flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-200 px-6 py-4 md:px-40 bg-white/80 backdrop-blur-md sticky top-0 z-10">
-            <Link href="/dashboard" className="flex items-center gap-3 text-primary" style={{ textDecoration: 'none' }}>
-              <div className="w-8 h-8">
-                <span style={{ fontSize: '24px' }}>💊</span>
-              </div>
-              <h2 className="text-xl font-bold leading-tight tracking-tight">Pills</h2>
-            </Link>
-          </header>
-
-          <main className="flex flex-1 justify-center py-10 px-4">
-            <div className="flex flex-col max-w-[640px] flex-1">
+    <div className="dashboard-layout">
+      <Sidebar />
+      <main className="main-content">
+        <div style={{ maxWidth: '640px', margin: '0 auto' }}>
               {/* Header Section */}
               <div className="flex flex-col gap-2 mb-10 px-2 text-center">
                 <h1 className="text-4xl font-black tracking-tight" style={{ fontSize: '2rem', fontWeight: 900, color: 'var(--color-text-primary)' }}>Novo Medicamento</h1>
@@ -140,7 +130,7 @@ export default function NovoMedicamentoPage() {
                         placeholder="Ex: Paracetamol 500mg" type="text" />
                     </label>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+                    <div className="grid-2-cols" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
                       <label style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                         <span style={{ fontSize: '14px', fontWeight: 600, color: 'var(--color-text-primary)' }}>Dosagem</span>
                         <input
@@ -173,7 +163,7 @@ export default function NovoMedicamentoPage() {
                 {/* Estoque Section */}
                 <div style={{ padding: '32px', borderBottom: '1px solid var(--color-border)', background: 'rgba(59, 130, 246, 0.03)' }}>
                   <h3 style={{ fontSize: '11px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--color-primary)', marginBottom: '24px' }}>Controle de Estoque (Opcional)</h3>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+                  <div className="grid-2-cols" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
                     <label style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                       <span style={{ fontSize: '14px', fontWeight: 600, color: 'var(--color-text-primary)' }}>Quantidade em Estoque</span>
                       <input
@@ -196,7 +186,7 @@ export default function NovoMedicamentoPage() {
                 {/* Schedule Section */}
                 <div style={{ padding: '32px', borderBottom: '1px solid var(--color-border)', background: 'rgba(139, 92, 246, 0.03)' }}>
                   <h3 style={{ fontSize: '11px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--color-primary)', marginBottom: '24px' }}>Período do Tratamento</h3>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '24px' }}>
+                  <div className="grid-3-cols" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '24px' }}>
                     <label style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                       <span style={{ fontSize: '14px', fontWeight: 600, color: 'var(--color-text-primary)' }}>Data de Início</span>
                       <input
@@ -297,7 +287,7 @@ export default function NovoMedicamentoPage() {
                 </div>
 
                 {/* Form Actions */}
-                <div style={{ padding: '32px', background: 'rgba(0,0,0,0.02)', display: 'flex', gap: '16px' }}>
+                <div className="mobile-stack" style={{ padding: '32px', background: 'rgba(0,0,0,0.02)', display: 'flex', gap: '16px' }}>
                   <button
                     type="button"
                     onClick={() => router.push('/dashboard')}
@@ -313,10 +303,8 @@ export default function NovoMedicamentoPage() {
                 </div>
               </form>
 
-            </div>
-          </main>
         </div>
-      </div>
+      </main>
     </div>
   )
 }

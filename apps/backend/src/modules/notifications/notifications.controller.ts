@@ -84,6 +84,20 @@ export class NotificationsController {
     });
     return { message: 'Test notification sent' };
   }
+
+  /**
+   * POST /notifications/test-whatsapp
+   * Send a test WhatsApp message to the authenticated user
+   */
+  @Post('test-whatsapp')
+  @HttpCode(HttpStatus.OK)
+  async testWhatsapp(@Request() req: any) {
+    const sent = await this.notificationsService.sendTestWhatsapp(req.user.userId);
+    if (!sent) {
+      throw new Error('Falha ao enviar mensagem de WhatsApp. Verifique os logs do servidor.');
+    }
+    return { message: 'WhatsApp test message sent' };
+  }
 }
 
 // ─── Cron Endpoint (Vercel Cron / external triggers) ────────────────────

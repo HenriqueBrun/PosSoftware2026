@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { useAuth, SignOutButton, UserButton } from '@clerk/nextjs'
 import Link from 'next/link'
 import { apiFetch } from '@/lib/api'
+import Sidebar from '@/components/Sidebar'
 
 interface Medication {
   id: string
@@ -72,134 +73,11 @@ export default function MedicamentosPage() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--color-background)', display: 'flex' }}>
-      {/* Sidebar */}
-      <aside
-        style={{
-          width: '260px',
-          background: 'var(--color-surface)',
-          borderRight: '1px solid var(--color-border)',
-          display: 'flex',
-          flexDirection: 'column',
-          padding: '24px 16px',
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '48px', padding: '0 8px' }}>
-          <div
-            style={{
-              width: '36px',
-              height: '36px',
-              borderRadius: '8px',
-              background: 'var(--color-primary)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <span style={{ fontSize: '18px' }}>💊</span>
-          </div>
-          <span style={{ fontSize: '20px', fontWeight: 700, color: 'var(--color-primary)' }}>Pills</span>
-        </div>
-
-        <nav style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: 1 }}>
-          <Link
-            href="/dashboard"
-            style={{
-              padding: '12px 16px',
-              borderRadius: '8px',
-              color: 'var(--color-text-secondary)',
-              fontWeight: 500,
-              textDecoration: 'none',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-            }}
-          >
-            🏠 Início
-          </Link>
-          <Link
-            href="/medicamentos"
-            style={{
-              padding: '12px 16px',
-              borderRadius: '8px',
-              background: 'rgba(19, 127, 236, 0.1)',
-              color: 'var(--color-primary)',
-              fontWeight: 600,
-              textDecoration: 'none',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-            }}
-          >
-            💊 Medicamentos
-          </Link>
-          <Link
-            href="/agenda"
-            style={{
-              padding: '12px 16px',
-              borderRadius: '8px',
-              color: 'var(--color-text-secondary)',
-              fontWeight: 500,
-              textDecoration: 'none',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-            }}
-          >
-            📅 Agenda
-          </Link>
-          <Link
-            href="/minha-conta"
-            style={{
-              padding: '12px 16px',
-              borderRadius: '8px',
-              color: 'var(--color-text-secondary)',
-              fontWeight: 500,
-              textDecoration: 'none',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-            }}
-          >
-            👤 Minha Conta
-          </Link>
-        </nav>
-
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <div style={{ padding: '8px 16px' }}>
-            <UserButton
-              appearance={{
-                elements: {
-                  avatarBox: { width: 32, height: 32 },
-                },
-              }}
-            />
-          </div>
-
-          <SignOutButton>
-            <button
-              style={{
-                padding: '12px 16px',
-                background: 'transparent',
-                border: 'none',
-                color: 'var(--color-danger)',
-                fontWeight: 600,
-                cursor: 'pointer',
-                textAlign: 'left',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                fontFamily: 'inherit',
-              }}
-            >
-              🚪 Sair
-            </button>
-          </SignOutButton>
-        </div>
-      </aside>
+    <div className="dashboard-layout">
+      <Sidebar />
 
       {/* Main Content */}
-      <main style={{ flex: 1, padding: '40px 48px', overflowY: 'auto' }}>
+      <main className="main-content">
         <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '48px' }}>
           <div>
             <h1 style={{ fontSize: '28px', fontWeight: 700, color: 'var(--color-text-primary)', marginBottom: '4px' }}>
@@ -267,7 +145,7 @@ export default function MedicamentosPage() {
             </Link>
           </div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '24px' }}>
+          <div className="grid-3-cols">
             {medications.map((med) => (
               <div
                 key={med.id}

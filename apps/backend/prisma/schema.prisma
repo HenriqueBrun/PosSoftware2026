@@ -29,6 +29,7 @@ model User {
   
   medications       Medication[]
   pushSubscriptions PushSubscription[]
+  symptomLogs       SymptomLog[]
 
   @@map("users")
 }
@@ -70,6 +71,7 @@ model Medication {
   updatedAt    DateTime    @updatedAt @map("updated_at")
   
   events       MedicationEvent[]
+  symptomLogs  SymptomLog[]
 
   @@map("medications")
 }
@@ -91,4 +93,21 @@ model MedicationEvent {
   medication   Medication  @relation(fields: [medicationId], references: [id], onDelete: Cascade)
 
   @@map("medication_events")
+}
+
+model SymptomLog {
+  id           String      @id @default(uuid())
+  description  String
+  intensity    String      // "mild", "moderate", "severe"
+  
+  userId       String      @map("user_id")
+  user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  medicationId String?     @map("medication_id")
+  medication   Medication? @relation(fields: [medicationId], references: [id], onDelete: SetNull)
+
+  createdAt    DateTime    @default(now()) @map("created_at")
+  updatedAt    DateTime    @updatedAt @map("updated_at")
+
+  @@map("symptom_logs")
 }

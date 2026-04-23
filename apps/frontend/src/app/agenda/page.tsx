@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { useUser, useAuth, SignOutButton, UserButton } from '@clerk/nextjs'
 import Link from 'next/link'
 import { apiFetch } from '@/lib/api'
+import Sidebar from '@/components/Sidebar'
 
 // Helpers
 const getDaysInMonth = (year: number, month: number) => {
@@ -91,134 +92,12 @@ export default function AgendaPage() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--color-surface)', display: 'flex' }}>
-      {/* Sidebar */}
-      <aside
-        style={{
-          width: '260px',
-          background: 'var(--color-surface)',
-          borderRight: '1px solid var(--color-border)',
-          display: 'flex',
-          flexDirection: 'column',
-          padding: '24px 16px',
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '48px', padding: '0 8px' }}>
-          <div
-            style={{
-              width: '36px',
-              height: '36px',
-              borderRadius: '8px',
-              background: 'var(--color-primary)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <span style={{ fontSize: '18px' }}>💊</span>
-          </div>
-          <span style={{ fontSize: '20px', fontWeight: 700, color: 'var(--color-primary)' }}>Pills</span>
-        </div>
-
-        <nav style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: 1 }}>
-          <Link
-            href="/dashboard"
-            style={{
-              padding: '12px 16px',
-              borderRadius: '8px',
-              color: 'var(--color-text-secondary)',
-              fontWeight: 500,
-              textDecoration: 'none',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-            }}
-          >
-            🏠 Início
-          </Link>
-          <Link
-            href="/medicamentos"
-            style={{
-              padding: '12px 16px',
-              borderRadius: '8px',
-              color: 'var(--color-text-secondary)',
-              fontWeight: 500,
-              textDecoration: 'none',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-            }}
-          >
-            💊 Medicamentos
-          </Link>
-          <Link
-            href="/agenda"
-            style={{
-              padding: '12px 16px',
-              borderRadius: '8px',
-              background: 'rgba(19, 127, 236, 0.1)',
-              color: 'var(--color-primary)',
-              fontWeight: 600,
-              textDecoration: 'none',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-            }}
-          >
-            📅 Agenda
-          </Link>
-          <Link
-            href="/minha-conta"
-            style={{
-              padding: '12px 16px',
-              borderRadius: '8px',
-              color: 'var(--color-text-secondary)',
-              fontWeight: 500,
-              textDecoration: 'none',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-            }}
-          >
-            👤 Minha Conta
-          </Link>
-        </nav>
-
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <div style={{ padding: '8px 16px' }}>
-            <UserButton
-              appearance={{
-                elements: {
-                  avatarBox: { width: 32, height: 32 },
-                },
-              }}
-            />
-          </div>
-
-          <SignOutButton>
-            <button
-              style={{
-                padding: '12px 16px',
-                background: 'transparent',
-                border: 'none',
-                color: 'var(--color-danger)',
-                fontWeight: 600,
-                cursor: 'pointer',
-                textAlign: 'left',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                fontFamily: 'inherit',
-              }}
-            >
-              🚪 Sair
-            </button>
-          </SignOutButton>
-        </div>
-      </aside>
+    <div className="dashboard-layout">
+      <Sidebar />
 
       {/* Main Content */}
-      <main style={{ flex: 1, padding: '24px 32px', display: 'flex', flexDirection: 'column' }}>
+      <main className="main-content">
+        <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
         {/* Calendar Toolbar */}
         <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
